@@ -106,23 +106,23 @@
         기존방식(세션 / 쿠키) -> 출석부(서버가 클라이언트 정보를 가지고있음)
         JWT 토큰방식 -> 팔찌(클라이언트가 정보를 가지고있음)
         -->
-<!--        <dependency>-->
-<!--            <groupId>io.jsonwebtoken</groupId>-->
-<!--            <artifactId>jjwt-api</artifactId>-->
-<!--            <version>0.13.0</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>io.jsonwebtoken</groupId>-->
-<!--            <artifactId>jjwt-impl</artifactId>-->
-<!--            <version>0.13.0</version>-->
-<!--            <scope>runtime</scope>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>io.jsonwebtoken</groupId>-->
-<!--            <artifactId>jjwt-jackson</artifactId>-->
-<!--            <version>0.13.0</version>-->
-<!--            <scope>runtime</scope>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.13.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.13.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.13.0</version>
+            <scope>runtime</scope>
+        </dependency>
 
 
 	</dependencies>
