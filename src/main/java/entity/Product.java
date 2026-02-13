@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 public class Product {
     private long productId;
     private long categoryId;
+    private long categoryDetailId;
     private String productName;
     private String description;
     private boolean isBest;
