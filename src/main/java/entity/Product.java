@@ -2,11 +2,23 @@ package entity;
 
 import lombok.*;
 
-@Getter
-@Setter
+import java.time.LocalDateTime;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Product {
     private long productId;
+    private long categoryId;
     private String productName;
-    private long sizeId;
-    private long colorId;
+    private String description;
+    private boolean isBest;
+    private String imgUrl;
+    private int price;
+    private String quickRunDown;
+    private LocalDateTime createdAt;
+    private LocalDateTime updateAt;
+
+
 }
