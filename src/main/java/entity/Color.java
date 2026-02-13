@@ -5,17 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
-public class ProductDetail {
-    private long productDetailId;
-    private long productId;
-    private long stockId;
-    private String productDetailContent;
-
-
+public class Color {
+    private long colorId;
+    private String colorName;
 }

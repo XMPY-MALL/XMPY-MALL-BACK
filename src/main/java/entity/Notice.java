@@ -5,17 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
-public class ProductDetail {
-    private long productDetailId;
-    private long productId;
-    private long stockId;
-    private String productDetailContent;
-
+public class Notice {
+    private long noticeId;
+    private String title;
+    private String Content;
+    private LocalDateTime creatAt;
 
 }

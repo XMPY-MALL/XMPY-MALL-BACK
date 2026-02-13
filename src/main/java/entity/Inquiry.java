@@ -8,16 +8,18 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Data
+@NoArgsConstructor
 @Builder
-public class Orders {
-    private long ordersId;
+public class Inquiry {
+    private long inquiryId;
     private long userId;
+    private long productId;
+    private String title;
+    private String content;
     private String status;
-    private long totalPrice;
-    private String address;
+    private String answerContent;
     private LocalDateTime creatdAt;
-    private LocalDateTime updateAt;
+    private LocalDateTime answeredAt;
 
 }

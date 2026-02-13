@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderItems {
+public class OrderItem {
     private long orderItemId;
     private long ordersId;
-    private long ProductId;
+    private long productId;
     private long colorId;
     private long sizeId;
     private int quantity;
