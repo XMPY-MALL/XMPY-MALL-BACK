@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class ProductCategory {
     private long categoryId;
     private String categoryName;
-    private long categoryDetailId;
+    private String categoryDetailName;
 }

@@ -9,6 +9,17 @@ import java.util.List;
 @Mapper
 public interface ProductMapper {
 
+    // 카테고리별 상품조회 + 페이징
+    // limit - 한 페이지에 몇개 가져올지
+    // offset - 몇개 건너뛸지 ( page - 1 * limit)
+    List<Product> findByCategoryDetailId (
+            @Param("categoryDetailId") long categoryDetailId,
+            @Param("limit") int limit,
+            @Param("offset") int offset
+    );
+
+    int countByCategoryDetailId(@Param("categoryDetailId") long categoryDetailId);
+
     // 상품 전체 조회
     List<Product> findAll();
 

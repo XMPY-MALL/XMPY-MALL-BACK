@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- =========================
+     ProductCategoryMapper.xml
+     namespace: repository.mapper.ProductCategoryMapper
+     table: product_category_tb
+========================= -->
+
+<mapper namespace="repository.mapper.ProductCategoryMapper">
+
+    <!-- product_category_tb -> entity.ProductCategory -->
+    <resultMap id="ProductCategoryMap" type="entity.ProductCategory">
+        <id     property="categoryId"         column="category_id"/>
+        <result property="categoryName"       column="category_name"/>
+        <result property="categoryDetailName" column="category_detail_name"/>
+    </resultMap>
+
+    <!-- 단건 등록 -->
+    <insert id="insert" parameterType="entity.ProductCategory">
+        INSERT INTO product_category_tb (
+        category_name,
+        category_detail_name
+        ) VALUES (
+        #{categoryName},
+        #{categoryDetailName}
+        )
+    </insert>
+
+    <!-- 단건 수정 -->
+    <update id="update" parameterType="entity.ProductCategory">
+        UPDATE product_category_tb
+        SET
+        category_name = #{categoryName},
+        category_detail_name = #{categoryDetailName}
+        WHERE category_id = #{categoryId}
+    </update>
+
+    <!-- 단건 삭제(id) -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM product_category_tb
+        WHERE category_id = #{id}
+    </delete>
+
+</mapper>

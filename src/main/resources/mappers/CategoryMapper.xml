@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE mapper
+            PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+            "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    <!-- =========================
+         CategoryMapper.xml
+         namespace: repository.mapper.CategoryMapper
+         table: category_tb
+    ========================= -->
+
+
+    <mapper namespace="repository.mapper.CategoryMapper">
+
+        <!-- category_tb -> entity.Category -->
+        <resultMap id="CategoryMap" type="entity.Category">
+            <id     property="categoryDetailId"   column="category_detail_id"/>
+            <result property="categoryDetailName" column="category_detail_name"/>
+        </resultMap>
+
+        <!-- 카테고리 디테일 전체조회 -->
+        <select id="findAll" resultMap="CategoryMap">
+            SELECT
+            c.category_detail_id,
+            c.category_detail_name
+            FROM category_tb c
+            ORDER BY c.category_detail_id ASC
+        </select>
+
+        <!-- 디테일 Id로 단건 조회 -->
+        <select id="findByCategoryDetailId" parameterType="long" resultMap="CategoryMap">
+            SELECT
+            c.category_detail_id,
+            c.category_detail_name
+            FROM category_tb c
+            WHERE c.category_detail_id = #{categoryDetailId}
+        </select>
+
+    </mapper>
