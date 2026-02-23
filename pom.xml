@@ -58,6 +58,7 @@
             <scope>runtime</scope>
         </dependency>
 
+
         <!--어노테이션기반 동적코드 삽입 예) @Data, @Builder...-->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -71,6 +72,7 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
         <!--mybatis용 테스트 툴-->
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
@@ -78,7 +80,6 @@
             <version>3.0.5</version>
             <scope>test</scope>
         </dependency>
-
 
 
         <!-- 객체 값 검증 라이브러리 -->
@@ -94,10 +95,10 @@
         인증: 출입 가능 여부 -> 서버 리소스에 접근 여부
         인가: 할수 있냐 없냐 -> 접근하고나서, 권한에 따라 접근 여부를 나누는 것
         -->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-security</artifactId>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
 
         <!-- JWT
         JWT 토큰 라이브러리 -> 놀이공원 자유이용권팔찌
@@ -155,5 +156,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
+    <!-- 일단 여기까지 하면, 이전 프로젝트와 pom.xml 코드 동일  -->
 </project>

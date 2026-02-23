@@ -1,0 +1,20 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### 시크릿 ###
+src/main/resources/application-secret.yaml
+application-secret.yaml
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+# git이 추적하지 않겠끔 gitIgnore에 설정해놓음

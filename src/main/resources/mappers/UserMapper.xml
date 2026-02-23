@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 참조 복사로 넣기 -->
+<mapper namespace="com.xmpy.demo.mapper.UserMapper">
+    <!-- roleResultMap - 롤먼저 만들기 /-->
+    <resultMap id="roleResultMap" type="com.xmpy.demo.entity.Role">
+        <id property="roleId" column="role_id"/>
+        <result property="roleName" column="role_name"/>
+    </resultMap>
+
+    <!-- 그 다음에, user 만들기   -->
+    <resultMap id="userResultMap" type="com.xmpy.demo.entity.User">
+        <id property="userId" column="user_id"/>
+        <result property="email" column="email"/>
+        <!-- 아이디랑 패스워드  -->
+        <result property="userName" column="user_name"/>
+        <result property="userPhone" column="user_phone"/>
+        <result property="address" column="address"/>
+        <result property="createAt" column="create_at"/>
+
+        <!--
+         연관관계를 여러개(List)로 들고 올때는, collection,
+         연관관계를 하나 들고 올때는, association
+        -->
+        <association property="roleId" resultMap="roleResultMap" />
+    </resultMap>
+
+
+    <insert id="addUser">
+        insert into
+            user_tb (email,user_password, user_name, user_phone, address, created_at, role_id)
+        values
+            (#{email}, #{userPassword} , #{userName}, #{userPhone}, #{address}, now(), 1)
+    </insert>
+    <!-- userId는 1이라고 가정 db에 roleid=1 -> user  이런식으로 db에 채워넣어야 한다-->
+    <!-- 위에 줄이 칼럼이름 이고, 아래줄이 property에 해당하는 것들   -->
+
+    <select id="getUserByUsername" resultMap="userResultMap">
+        select
+            u.user_id,
+            u.email,
+            u.user_name,
+            u.user_phone,
+            u.address,
+            u.created_at
+        from
+            user_tb u
+                inner join role_tb r on u.role_id = r.role_id
+        where
+            u.username = #{userName}
+    </select>
+
+    <select id="getUserByEmail" resultMap="userResultMap">
+        select
+            u.user_id,
+            u.email,
+            u.user_name,
+            u.user_phone,
+            u.address,
+            u.created_at
+        from
+            user_tb u
+                inner join role_tb r on u.role_id = r.role_id
+        where
+            u.email = #{email}
+    </select>
+
+    <select id="getUserById" resultMap="userResultMap">
+        select
+            u.user_id,
+            u.email,
+            u.user_name,
+            u.user_phone,
+            u.address,
+            u.created_at
+        from
+            user_tb u
+                inner join role_tb r on u.role_id = r.role_id
+        where
+            u.user_id = #{userId}
+    </select>
+
+
+
+</mapper>
