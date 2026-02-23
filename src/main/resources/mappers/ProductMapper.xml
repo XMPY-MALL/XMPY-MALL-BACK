@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- =========================
+     ProductMapper.xml
+     namespace: repository.mapper.ProductMapper
+     table: product_tb
+     (조인: product_detail_tb / product_category_tb / category_tb 포함)
+     ⚠️ 엔티티 Product에 없는 컬럼 매핑 꼬임 방지 위해 SELECT는 p.*만
+========================= -->
+
+
+<mapper namespace="repository.mapper.ProductMapper">
+
+    <!-- product_tb -> entity.Product -->
+    <resultMap id="ProductMap" type="entity.Product">
+        <id     property="productId"        column="product_id"/>
+        <result property="productName"      column="product_name"/>
+        <result property="description"      column="description"/>
+        <result property="best"           column="is_best"/>
+        <result property="imgUrl"           column="img_url"/>
+        <result property="price"            column="price"/>
+        <result property="quickRundown"     column="quick_rundown"/>
+        <result property="categoryId"       column="category_id"/>
+        <result property="createdAt"        column="created_at"/>
+        <result property="updatedAt"        column="updated_at"/>
+        <result property="categoryDetailId" column="category_detail_id"/>
+    </resultMap>
+
+
+    <!-- 카테고리별 상품조회 + 페이징 -->
+    <select id="findByCategoryDetailId" resultMap="ProductMap">
+        SELECT
+        p.product_id,
+        p.product_name,
+        p.description,
+        p.is_best,
+        p.img_url,
+        p.price,
+        p.quick_rundown,
+        p.category_id,
+        p.created_at,
+        p.updated_at,
+        p.category_detail_id
+        FROM product_tb p
+        LEFT JOIN product_detail_tb pd ON pd.product_id = p.product_id
+        LEFT JOIN product_category_tb pc ON pc.category_id = p.category_id
+        LEFT JOIN category_tb c ON c.category_detail_id = p.category_detail_id
+        WHERE p.category_detail_id = #{categoryDetailId}
+        GROUP BY
+        p.product_id,
+        p.product_name,
+        p.description,
+        p.is_best,
+        p.img_url,
+        p.price,
+        p.quick_rundown,
+        p.category_id,
+        p.created_at,
+        p.updated_at,
+        p.category_detail_id
+        ORDER BY p.created_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countByCategoryDetailId" parameterType="long" resultType="int">
+        SELECT COUNT(DISTINCT p.product_id)
+        FROM product_tb p
+        LEFT JOIN product_detail_tb pd ON pd.product_id = p.product_id
+        LEFT JOIN product_category_tb pc ON pc.category_id = p.category_id
+        LEFT JOIN category_tb c ON c.category_detail_id = p.category_detail_id
+        WHERE p.category_detail_id = #{categoryDetailId}
+    </select>
+
+
+    <!-- 상품 전체 조회 -->
+    <select id="findAll" resultMap="ProductMap">
+        SELECT
+        p.product_id,
+        p.product_name,
+        p.description,
+        p.is_best,
+        p.img_url,
+        p.price,
+        p.quick_rundown,
+        p.category_id,
+        p.created_at,
+        p.updated_at,
+        p.category_detail_id
+        FROM product_tb p
+        LEFT JOIN product_detail_tb pd ON pd.product_id = p.product_id
+        LEFT JOIN product_category_tb pc ON pc.category_id = p.category_id
+        LEFT JOIN category_tb c ON c.category_detail_id = p.category_detail_id
+        GROUP BY
+        p.product_id,
+        p.product_name,
+        p.description,
+        p.is_best,
+        p.img_url,
+        p.price,
+        p.quick_rundown,
+        p.category_id,
+        p.created_at,
+        p.updated_at,
+        p.category_detail_id
+        ORDER BY p.created_at DESC
+    </select>
+
+
+    <!-- 상품 단건 조회 (productId) -->
+    <select id="findById" parameterType="long" resultMap="ProductMap">
+        SELECT
+        p.product_id,
+        p.product_name,
+        p.description,
+        p.is_best,
+        p.img_url,
+        p.price,
+        p.quick_rundown,
+        p.category_id,
+        p.created_at,
+        p.updated_at,
+        p.category_detail_id
+        FROM product_tb p
+        LEFT JOIN product_detail_tb pd ON pd.product_id = p.product_id
+        LEFT JOIN product_category_tb pc ON pc.category_id = p.category_id
+        LEFT JOIN category_tb c ON c.category_detail_id = p.category_detail_id
+        WHERE p.product_id = #{productId}
+        GROUP BY
+        p.product_id,
+        p.product_name,
+        p.description,
+        p.is_best,
+        p.img_url,
+        p.price,
+        p.quick_rundown,
+        p.category_id,
+        p.created_at,
+        p.updated_at,
+        p.category_detail_id
+    </select>
+
+
+    <!-- 아우터/상의/하의 등 대분류(category_id) 전체 상품 조회 -->
+    <select id="findByCategoryId" parameterType="long" resultMap="ProductMap">
+        SELECT
+        p.product_id,
+        p.product_name,
+        p.description,
+        p.is_best,
+        p.img_url,
+        p.price,
+        p.quick_rundown,
+        p.category_id,
+        p.created_at,
+        p.updated_at,
+        p.category_detail_id
+        FROM product_tb p
+        LEFT JOIN product_detail_tb pd ON pd.product_id = p.product_id
+        LEFT JOIN product_category_tb pc ON pc.category_id = p.category_id
+        LEFT JOIN category_tb c ON c.category_detail_id = p.category_detail_id
+        WHERE p.category_id = #{categoryId}
+        GROUP BY
+        p.product_id,
+        p.product_name,
+        p.description,
+        p.is_best,
+        p.img_url,
+        p.price,
+        p.quick_rundown,
+        p.category_id,
+        p.created_at,
+        p.updated_at,
+        p.category_detail_id
+        ORDER BY p.created_at DESC
+    </select>
+
+
+    <!-- 후드/맨투맨 등 디테일(category_detail_id) 상품 조회 (페이징 없이) -->
+    <select id="findByDetailId" parameterType="long" resultMap="ProductMap">
+        SELECT
+        p.product_id,
+        p.product_name,
+        p.description,
+        p.is_best,
+        p.img_url,
+        p.price,
+        p.quick_rundown,
+        p.category_id,
+        p.created_at,
+        p.updated_at,
+        p.category_detail_id
+        FROM product_tb p
+        LEFT JOIN product_detail_tb pd ON pd.product_id = p.product_id
+        LEFT JOIN product_category_tb pc ON pc.category_id = p.category_id
+        LEFT JOIN category_tb c ON c.category_detail_id = p.category_detail_id
+        WHERE p.category_detail_id = #{categoryDetailId}
+        GROUP BY
+        p.product_id,
+        p.product_name,
+        p.description,
+        p.is_best,
+        p.img_url,
+        p.price,
+        p.quick_rundown,
+        p.category_id,
+        p.created_at,
+        p.updated_at,
+        p.category_detail_id
+        ORDER BY p.created_at DESC
+    </select>
+
+
+    <!-- 상품 등록 -->
+    <insert id="insert" parameterType="entity.Product">
+        INSERT INTO product_tb (
+        product_name,
+        description,
+        is_best,
+        img_url,
+        price,
+        quick_rundown,
+        category_id,
+        created_at,
+        updated_at,
+        category_detail_id
+        ) VALUES (
+        #{productName},
+        #{description},
+        #{isBest},
+        #{imgUrl},
+        #{price},
+        #{quickRundown},
+        #{categoryId},
+        #{createdAt},
+        #{updatedAt},
+        #{categoryDetailId}
+        )
+    </insert>
+
+
+    <!-- 상품 수정 -->
+    <update id="update" parameterType="entity.Product">
+        UPDATE product_tb
+        SET
+        product_name = #{productName},
+        description = #{description},
+        is_best = #{isBest},
+        img_url = #{imgUrl},
+        price = #{price},
+        quick_rundown = #{quickRundown},
+        category_id = #{categoryId},
+        updated_at = #{updatedAt},
+        category_detail_id = #{categoryDetailId}
+        WHERE product_id = #{productId}
+    </update>
+
+
+    <!-- 상품 삭제 -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM product_tb
+        WHERE product_id = #{productId}
+    </delete>
+
+</mapper>

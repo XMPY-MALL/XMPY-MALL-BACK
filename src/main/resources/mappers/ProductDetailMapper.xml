@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- =========================
+     ProductDetailMapper.xml
+     namespace: repository.mapper.ProductDetailMapper
+     table: product_detail_tb
+     (조인: product_tb / product_category_tb / category_tb 포함)
+========================= -->
+
+<mapper namespace="repository.mapper.ProductDetailMapper">
+
+    <!-- product_detail_tb -> entity.ProductDetail -->
+    <resultMap id="ProductDetailMap" type="entity.ProductDetail">
+        <id     property="productDetailId"      column="product_detail_id"/>
+        <result property="productId"            column="product_id"/>
+        <result property="stockId"              column="stock_id"/>
+        <result property="productDetailContent" column="product_detail_content"/>
+    </resultMap>
+
+    <!-- 상품상세 단건 조회 (productDetailId) -->
+    <select id="findById" parameterType="long" resultMap="ProductDetailMap">
+        SELECT
+        pd.product_detail_id,
+        pd.product_id,
+        pd.stock_id,
+        pd.product_detail_content
+        FROM product_detail_tb pd
+        LEFT JOIN product_tb p ON p.product_id = pd.product_id
+        LEFT JOIN product_category_tb pc ON pc.category_id = p.category_id
+        LEFT JOIN category_tb c ON c.category_detail_id = p.category_detail_id
+        WHERE pd.product_detail_id = #{productDetailId}
+    </select>
+
+    <!-- 상세 상품 등록 -->
+    <insert id="insert" parameterType="entity.ProductDetail">
+        INSERT INTO product_detail_tb (
+        product_id,
+        stock_id,
+        product_detail_content
+        ) VALUES (
+        #{productId},
+        #{stockId},
+        #{productDetailContent}
+        )
+    </insert>
+
+    <!-- 상세 상품 수정 -->
+    <update id="update" parameterType="entity.ProductDetail">
+        UPDATE product_detail_tb
+        SET
+        product_id = #{productId},
+        stock_id = #{stockId},
+        product_detail_content = #{productDetailContent}
+        WHERE product_detail_id = #{productDetailId}
+    </update>
+
+    <!-- 상세 상품 삭제 -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM product_detail_tb
+        WHERE product_detail_id = #{productDetailId}
+    </delete>
+
+</mapper>
