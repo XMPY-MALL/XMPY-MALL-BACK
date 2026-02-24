@@ -8,17 +8,17 @@
      table: product_category_tb
 ========================= -->
 
-<mapper namespace="repository.mapper.ProductCategoryMapper">
+<mapper namespace="com.xmpy.demo.mapper.ProductCategoryMapper">
 
     <!-- product_category_tb -> entity.ProductCategory -->
-    <resultMap id="ProductCategoryMap" type="entity.ProductCategory">
+    <resultMap id="ProductCategoryMap" type="com.xmpy.demo.entity.ProductCategory">
         <id     property="categoryId"         column="category_id"/>
         <result property="categoryName"       column="category_name"/>
         <result property="categoryDetailName" column="category_detail_name"/>
     </resultMap>
 
     <!-- 단건 등록 -->
-    <insert id="insert" parameterType="entity.ProductCategory">
+    <insert id="insert" parameterType="com.xmpy.demo.entity.ProductCategory">
         INSERT INTO product_category_tb (
         category_name,
         category_detail_name
@@ -29,7 +29,7 @@
     </insert>
 
     <!-- 단건 수정 -->
-    <update id="update" parameterType="entity.ProductCategory">
+    <update id="update" parameterType="com.xmpy.demo.entity.ProductCategory">
         UPDATE product_category_tb
         SET
         category_name = #{categoryName},

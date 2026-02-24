@@ -1,11 +1,11 @@
 package service;
 
 
-import dto.res.product.ProductPagingRes;
-import entity.Product;
+import com.xmpy.demo.dto.res.product.ProductPagingRes;
+import com.xmpy.demo.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import repository.mapper.ProductMapper;
+import com.xmpy.demo.mapper.ProductMapper;
 
 import java.time.LocalDateTime;
 import java.util.List;

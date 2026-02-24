@@ -9,10 +9,10 @@
     ========================= -->
 
 
-    <mapper namespace="repository.mapper.CategoryMapper">
+    <mapper namespace="com.xmpy.demo.mapper.CategoryMapper">
 
         <!-- category_tb -> entity.Category -->
-        <resultMap id="CategoryMap" type="entity.Category">
+        <resultMap id="CategoryMap" type="com.xmpy.demo.entity.Category">
             <id     property="categoryDetailId"   column="category_detail_id"/>
             <result property="categoryDetailName" column="category_detail_name"/>
         </resultMap>

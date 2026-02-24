@@ -14,12 +14,12 @@ public class Product {
     private long categoryDetailId;
     private String productName;
     private String description;
-    private boolean isBest;
+    private boolean best;
     private String imgUrl;
     private int price;
-    private String quickRunDown;
+    private String quickRundown;
     private LocalDateTime createdAt;
-    private LocalDateTime updateAt;
+    private LocalDateTime updatedAt;
 
 
 }

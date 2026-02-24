@@ -52,6 +52,11 @@ public class JwtAuthentication implements Authentication {
         // 인증에 성공한다.
     }
 
+    @Override
+    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
+        this.isAuthenticated = isAuthenticated;
+    }
+
 
     @Override
     public String getName() {

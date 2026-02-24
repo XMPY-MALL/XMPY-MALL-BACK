@@ -1,6 +1,6 @@
-package dto.res.product;
+package com.xmpy.demo.dto.res.product;
 
-import entity.Product;
+import com.xmpy.demo.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
