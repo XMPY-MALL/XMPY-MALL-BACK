@@ -1,11 +1,12 @@
 package com.xmpy.demo.controller;
 
 import com.xmpy.demo.entity.Product;
+import com.xmpy.demo.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import service.ProductService;
+
 
 import java.util.List;
 

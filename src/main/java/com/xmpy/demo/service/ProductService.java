@@ -1,6 +1,4 @@
-package service;
-
-
+package com.xmpy.demo.service;
 import com.xmpy.demo.dto.res.product.ProductPagingRes;
 import com.xmpy.demo.entity.Product;
 import lombok.RequiredArgsConstructor;
