@@ -9,10 +9,10 @@
      (조인: product_tb / product_category_tb / category_tb 포함)
 ========================= -->
 
-<mapper namespace="repository.mapper.ProductDetailMapper">
+<mapper namespace="com.xmpy.demo.mapper.ProductDetailMapper">
 
     <!-- product_detail_tb -> entity.ProductDetail -->
-    <resultMap id="ProductDetailMap" type="entity.ProductDetail">
+    <resultMap id="ProductDetailMap" type="com.xmpy.demo.entity.ProductDetail">
         <id     property="productDetailId"      column="product_detail_id"/>
         <result property="productId"            column="product_id"/>
         <result property="stockId"              column="stock_id"/>
@@ -34,7 +34,7 @@
     </select>
 
     <!-- 상세 상품 등록 -->
-    <insert id="insert" parameterType="entity.ProductDetail">
+    <insert id="insert" parameterType="com.xmpy.demo.entity.ProductDetail">
         INSERT INTO product_detail_tb (
         product_id,
         stock_id,
@@ -47,7 +47,7 @@
     </insert>
 
     <!-- 상세 상품 수정 -->
-    <update id="update" parameterType="entity.ProductDetail">
+    <update id="update" parameterType="com.xmpy.demo.entity.ProductDetail">
         UPDATE product_detail_tb
         SET
         product_id = #{productId},

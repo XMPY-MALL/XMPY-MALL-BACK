@@ -1,7 +1,7 @@
-package repository.mapper;
+package com.xmpy.demo.mapper;
 
 
-import entity.ProductDetail;
+import com.xmpy.demo.entity.ProductDetail;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

@@ -12,10 +12,10 @@
 ========================= -->
 
 
-<mapper namespace="repository.mapper.ProductMapper">
+<mapper namespace="com.xmpy.demo.mapper.ProductMapper">
 
     <!-- product_tb -> entity.Product -->
-    <resultMap id="ProductMap" type="entity.Product">
+    <resultMap id="ProductMap" type="com.xmpy.demo.entity.Product">
         <id     property="productId"        column="product_id"/>
         <result property="productName"      column="product_name"/>
         <result property="description"      column="description"/>
@@ -214,7 +214,7 @@
 
 
     <!-- 상품 등록 -->
-    <insert id="insert" parameterType="entity.Product">
+    <insert id="insert" parameterType="com.xmpy.demo.entity.Product">
         INSERT INTO product_tb (
         product_name,
         description,
@@ -242,7 +242,7 @@
 
 
     <!-- 상품 수정 -->
-    <update id="update" parameterType="entity.Product">
+    <update id="update" parameterType="com.xmpy.demo.entity.Product">
         UPDATE product_tb
         SET
         product_name = #{productName},

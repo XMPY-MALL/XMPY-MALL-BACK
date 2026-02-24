@@ -18,5 +18,5 @@ public interface ProductCategoryMapper {
     int update(ProductCategory productCategory);
 
     // 상품 단건 삭제(id)
-    int deleteProductById(long id);
+    int deleteById(long id);
 }
