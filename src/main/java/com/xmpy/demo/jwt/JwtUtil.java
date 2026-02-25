@@ -106,7 +106,7 @@ public class JwtUtil { // ( jwt 토큰 발급 + jwt 토큰 검증 )
     */
     // 바로 위에 있는 토큰발급 코드메서드를 활용한다
     // accessToken발급
-    public String generateToken(String subject, Map<String, Object> claims){
+    public String generateAccessToken(String subject, Map<String, Object> claims){
         return buildToken(subject, accessExpireMillis, claims, "ACCESS");
     }
 

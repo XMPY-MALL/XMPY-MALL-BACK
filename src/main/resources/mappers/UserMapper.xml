@@ -14,17 +14,12 @@
     <resultMap id="userResultMap" type="com.xmpy.demo.entity.User">
         <id property="userId" column="user_id"/>
         <result property="email" column="email"/>
-        <!-- 아이디랑 패스워드  -->
+        <result property="userPassword" column="user_password"/>  <!-- 추가! -->
         <result property="userName" column="user_name"/>
         <result property="userPhone" column="user_phone"/>
         <result property="address" column="address"/>
-        <result property="createAt" column="create_at"/>
-
-        <!--
-         연관관계를 여러개(List)로 들고 올때는, collection,
-         연관관계를 하나 들고 올때는, association
-        -->
-        <association property="roleId" resultMap="roleResultMap" />
+        <result property="createAt" column="created_at"/>
+        <result property="roleId" column="role_id"/>  <!-- association 제거하고 이걸로 -->
     </resultMap>
 
 
@@ -44,12 +39,14 @@
             u.user_name,
             u.user_phone,
             u.address,
-            u.created_at
+            u.created_at,
+            u.user_password,
+            u.role_id
         from
             user_tb u
                 inner join role_tb r on u.role_id = r.role_id
         where
-            u.username = #{userName}
+            u.user_name = #{userName}
     </select>
 
     <select id="getUserByEmail" resultMap="userResultMap">
@@ -59,7 +56,9 @@
             u.user_name,
             u.user_phone,
             u.address,
-            u.created_at
+            u.created_at,
+            u.user_password,
+            u.role_id
         from
             user_tb u
                 inner join role_tb r on u.role_id = r.role_id
@@ -74,14 +73,13 @@
             u.user_name,
             u.user_phone,
             u.address,
-            u.created_at
+            u.created_at,
+            u.user_password,
+            u.role_id
         from
             user_tb u
                 inner join role_tb r on u.role_id = r.role_id
         where
             u.user_id = #{userId}
     </select>
-
-
-
 </mapper>
