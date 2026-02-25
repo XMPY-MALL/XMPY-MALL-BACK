@@ -1,13 +1,18 @@
 package com.xmpy.demo.service;
 
+import com.xmpy.demo.dto.req.auth.SignInReqDto;
 import com.xmpy.demo.dto.req.auth.SignupReqDto;
+import com.xmpy.demo.dto.res.auth.SigninResDto;
 import com.xmpy.demo.entity.User;
 import com.xmpy.demo.exeption.UserException;
+import com.xmpy.demo.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.xmpy.demo.mapper.UserMapper;
+
+import java.util.Map;
 
 
 // 회원가입 -> DB 저장 -- 메서드..
@@ -16,7 +21,27 @@ import com.xmpy.demo.mapper.UserMapper;
 public class AuthService {
     private final UserMapper userMapper;
     private final BCryptPasswordEncoder encoder;
+    private final JwtUtil jwtUtil;
 
+
+    // User객체만 가져오면, 토큰 쌍으로 바꿔서 리턴
+    private SigninResDto generateTokenPair(User user){
+        // 토큰에 담을 sub, extraClaims를 User로부터 추출
+        String sub = String.valueOf(user.getUserId());
+
+        Map<String, Object> extraClaims = Map.of(
+                "role", user.getRoleId()
+                // 강사님은 user.getRole().getRoleName()으로 작성
+                // 강사님의 entity와 나의 entity부분이 다른데, 어떤 방식으로 해줘야 하나..
+        );
+
+        String accessToken = jwtUtil.generateAccessToken(sub, extraClaims);
+        String refreshToken = jwtUtil.generateRefreshToken(sub); // refreshToken관련 코드
+
+        return new SigninResDto(accessToken, refreshToken); // refresh관련 코드
+    }
+
+    // 1. 회원 가입
     public void signUp(SignupReqDto dto) {
 
         // 1. 아이디, 이메일 중복검사..
@@ -50,5 +75,33 @@ public class AuthService {
                     HttpStatus.INTERNAL_SERVER_ERROR  // 500
             );
         }
+    }
+
+
+
+    // 2. 로그인
+    public SigninResDto signIn(SignInReqDto dto){
+        // 아이디 확인
+        // 실제 아이디(이메일)가 있는지 검사
+        User user = userMapper.getUserByEmail(dto.getEmail())
+                .orElseThrow(() -> new UserException("아이디(이메일)를 잘못 입력함 똑바로 입력하셈",
+                        HttpStatus.BAD_REQUEST));
+
+        // 비밀번호 확인
+        // encoder.matches(평문암호, 암호화된 암호)
+        // dto에 니가 입력한 값과, 실제 mysql에 있는 값을 비교한다
+        // 지금 계속 password에서 문제가 발생하고 있음....
+        if (!encoder.matches(dto.getPassword(), user.getUserPassword())){
+            // 비밀번호 틀렸을때
+            throw new UserException("비밀번호 잘못 입력햇다 다시 똑바로"
+            , HttpStatus.BAD_REQUEST);
+        }
+
+
+        // 둘다 맞을때, 로그인 시켜준다!! ( 토큰 발급 - 팔찌를 채워줘야 한다)
+        SigninResDto tokenPair = generateTokenPair(user);
+
+        return tokenPair;
+        // refresh토큰 db저장 (리프레쉬관련코드)
     }
 }
