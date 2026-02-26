@@ -82,9 +82,6 @@ public class ProductService  {
     }
 
     // 다건 상품 삭제
-    public int deleteAll() {
-        return productMapper.deleteAll();
-    }
 
 
 }

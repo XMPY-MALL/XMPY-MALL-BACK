@@ -1,6 +1,8 @@
 package com.xmpy.demo.controller;
 
+import com.xmpy.demo.dto.req.auth.SignInReqDto;
 import com.xmpy.demo.dto.req.auth.SignupReqDto;
+import com.xmpy.demo.dto.res.auth.SigninResDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,5 +29,17 @@ public class AuthController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body("계정생성 완료");
+    }
+
+    // 논리적으로는 getMapping이 맞지만, -> 하지만, param등 민감정보가 노출
+    // 민감한 정보를 주고 받아야 한다 -> body가 필요함.. -> post
+    @PostMapping("/signin")
+    public ResponseEntity<?> signIn(@RequestBody SignInReqDto reqDto){
+        SigninResDto resDto = authService.signIn(reqDto);
+
+        // refreshToken은 cookie(헤더)에 담아서 응답(나중에)
+
+        // body로 accessToken만 응답해준다
+        return ResponseEntity.ok(resDto.getAccessToken());
     }
 }
