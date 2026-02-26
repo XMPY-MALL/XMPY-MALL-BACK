@@ -264,4 +264,9 @@
         WHERE product_id = #{productId}
     </delete>
 
+    <delete id="deleteByIds" parameterType="list">
+        DELTE FROM product_tb
+        WHERE product
+    </delete>
+
 </mapper>
