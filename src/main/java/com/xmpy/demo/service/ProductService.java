@@ -64,6 +64,9 @@ public class ProductService  {
     }
 
     // 상품 등록
+    public int insert(Product product) {
+         return productMapper.insert(product);
+    }
 
 
     // 상품 수정
@@ -74,9 +77,14 @@ public class ProductService  {
 
     // 상품 삭제
     public int delete(long productId) {
+
         return productMapper.deleteById(productId);
     }
 
+    // 다건 상품 삭제
+    public int deleteAll() {
+        return productMapper.deleteAll();
+    }
 
 
 }
