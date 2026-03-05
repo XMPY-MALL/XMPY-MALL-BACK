@@ -17,9 +17,10 @@ import com.xmpy.demo.service.AuthService;
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
-    // 일단 로그인 / 로그 아웃 / 회원가입 구현 - 따로 UserController만들어야 하는가?
+    // 일단 로그인 / 로그 아웃 / 회원가입 구현 - 따로 UserController만들어야 하는가? -- ㄴㄴ
     private final AuthService authService;
 
+    // 회원가입
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(
             @RequestBody @Valid SignupReqDto dto){
@@ -31,15 +32,11 @@ public class AuthController {
                 .body("계정생성 완료");
     }
 
+    // 로그인
     // 논리적으로는 getMapping이 맞지만, -> 하지만, param등 민감정보가 노출
     // 민감한 정보를 주고 받아야 한다 -> body가 필요함.. -> post
     @PostMapping("/signin")
     public ResponseEntity<?> signIn(@RequestBody SignInReqDto reqDto){
-        SigninResDto resDto = authService.signIn(reqDto);
-
-        // refreshToken은 cookie(헤더)에 담아서 응답(나중에)
-
-        // body로 accessToken만 응답해준다
-        return ResponseEntity.ok(resDto.getAccessToken());
+        return ResponseEntity.ok(authService.signIn(reqDto));
     }
 }

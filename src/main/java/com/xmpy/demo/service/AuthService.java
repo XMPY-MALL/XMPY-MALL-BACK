@@ -25,9 +25,9 @@ public class AuthService {
 
 
     // User객체만 가져오면, 토큰 쌍으로 바꿔서 리턴
-    private SigninResDto generateTokenPair(User user){
+    private String generateToken(User user){
         // 토큰에 담을 sub, extraClaims를 User로부터 추출
-        String sub = String.valueOf(user.getUserId());
+        String sub = user.getEmail();
 
         Map<String, Object> extraClaims = Map.of(
                 "role", user.getRoleId()
@@ -36,9 +36,8 @@ public class AuthService {
         );
 
         String accessToken = jwtUtil.generateAccessToken(sub, extraClaims);
-        String refreshToken = jwtUtil.generateRefreshToken(sub); // refreshToken관련 코드
 
-        return new SigninResDto(accessToken, refreshToken); // refresh관련 코드
+        return accessToken;
     }
 
     // 1. 회원 가입
@@ -71,7 +70,7 @@ public class AuthService {
         // 실패하면, 당연히 값은 0 => 따라서 UserException실행
         if (successCount <= 0) {
             throw new UserException(
-                    "회원가입 중 에러가 발생하였습니다",
+                    "회원가입 중 오류가 발생하였습니다 다시 시도해주세요",
                     HttpStatus.INTERNAL_SERVER_ERROR  // 500
             );
         }
@@ -80,11 +79,11 @@ public class AuthService {
 
 
     // 2. 로그인
-    public SigninResDto signIn(SignInReqDto dto){
+    public String signIn(SignInReqDto dto){
         // 아이디 확인
         // 실제 아이디(이메일)가 있는지 검사
         User user = userMapper.getUserByEmail(dto.getEmail())
-                .orElseThrow(() -> new UserException("아이디(이메일)를 잘못 입력함 똑바로 입력하셈",
+                .orElseThrow(() -> new UserException("이메일 또는 비밀번호를 잘못 입력하셨습니다 다시 입력해주세요",
                         HttpStatus.BAD_REQUEST));
 
         // 비밀번호 확인
@@ -93,15 +92,10 @@ public class AuthService {
         // 지금 계속 password에서 문제가 발생하고 있음....
         if (!encoder.matches(dto.getPassword(), user.getUserPassword())){
             // 비밀번호 틀렸을때
-            throw new UserException("비밀번호 잘못 입력햇다 다시 똑바로"
+            throw new UserException("이메일 또는 비밀번호 잘못 입력하셨습니다 다시 확인해주세요"
             , HttpStatus.BAD_REQUEST);
         }
 
-
-        // 둘다 맞을때, 로그인 시켜준다!! ( 토큰 발급 - 팔찌를 채워줘야 한다)
-        SigninResDto tokenPair = generateTokenPair(user);
-
-        return tokenPair;
-        // refresh토큰 db저장 (리프레쉬관련코드)
+        return generateToken(user);
     }
 }

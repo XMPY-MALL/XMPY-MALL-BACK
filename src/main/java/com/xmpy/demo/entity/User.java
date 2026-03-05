@@ -16,7 +16,7 @@ public class User {
     private String email;
     private String userPassword;
     private String userName;
-    private long userPhone;
+    private String userPhone;
     // 기능 문제 때문에 userPhone을 String으로 수정함
     private String address;
     private LocalDateTime createAt;
