@@ -1,5 +1,6 @@
 package com.xmpy.demo.config;
 
+import com.xmpy.demo.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -68,7 +70,7 @@ public class SecurityConfig {
 
     // filterChain 설정 (filter 설정)
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
 
         // 위에서 Bean으로 만든 설저객체를 security에 적용
         http.cors(Customizer.withDefaults());
@@ -87,6 +89,7 @@ public class SecurityConfig {
         // 세션기반 기능 다 OFF
 
         // JWT 관련 필터 설정 ( 나중에 )
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         // url 요청에 대한 권한 설정
         http.authorizeHttpRequests(auth-> {

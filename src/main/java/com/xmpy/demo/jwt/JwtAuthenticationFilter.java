@@ -1,14 +1,20 @@
 package com.xmpy.demo.jwt;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 
 // filter -> 요청과 응답의 전처리 or 후처리를 위한 존재
@@ -40,11 +46,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { // 상속받
         // - 요청의 헤더에 존재 (authorization key에 담아둠)
         String authHeader = request.getHeader("authorization");
 
-        // Bearer 접두가 없다면, 다음 필터로 넘긴다
+        // Bearer 없으면 → 그냥 통과
         if (!jwtUtil.isBearer(authHeader)){
             filterChain.doFilter(request, response);
-            return;
+            return;  // ← 여기서 끝!
         }
+
+        // Bearer 있으면 → 토큰 검증
+        String token = jwtUtil.removeBearer(authHeader);
+
+        try {
+            Claims claims = jwtUtil.getClaims(token);
+            String email = claims.get("sub", String.class);
+
+            List<GrantedAuthority> authorities = List.of(
+                    new SimpleGrantedAuthority("ROLE_USER")
+            );
+            JwtAuthentication authentication = new JwtAuthentication(email, authorities);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        } catch (JwtException e) {
+            System.out.println("토큰 검증 실패: " + e.getMessage());
+        }
+
+        filterChain.doFilter(request, response);
     }
 
 

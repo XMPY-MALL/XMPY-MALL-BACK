@@ -22,7 +22,6 @@
         <result property="roleId" column="role_id"/>  <!-- association 제거하고 이걸로 -->
     </resultMap>
 
-
     <insert id="addUser">
         insert into
             user_tb (email,user_password, user_name, user_phone, address, created_at, role_id)
@@ -32,6 +31,12 @@
     <!-- userId는 1이라고 가정 db에 roleid=1 -> user  이런식으로 db에 채워넣어야 한다-->
     <!-- 위에 줄이 칼럼이름 이고, 아래줄이 property에 해당하는 것들   -->
 
+
+    <!--
+    지금부터 아래에 있는 코드들은
+    그 비밀번호, 이메일, 주소, 전화번호 바꾸는 코드 작성하기
+    -->
+    <!-- 1. userName    -->
     <select id="getUserByUsername" resultMap="userResultMap">
         select
             u.user_id,
@@ -49,6 +54,7 @@
             u.user_name = #{userName}
     </select>
 
+    <!-- 1. userName    -->
     <select id="getUserByEmail" resultMap="userResultMap">
         select
             u.user_id,
@@ -82,4 +88,13 @@
         where
             u.user_id = #{userId}
     </select>
+
+    <update id="updateUserInfo">
+        update user_tb
+        set
+            user_password = #{password},
+            address = #{address},
+            user_phone = #{userPhone}
+        where email = #{email}
+    </update>
 </mapper>
