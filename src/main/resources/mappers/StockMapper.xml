@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xmpy.demo.mapper.StockMapper">
+
+    <select id="countByOption" resultType="int">
+        select count(*)
+        from stock_tb
+        where product_id = #{productId}
+          and size_id = #{sizeId}
+          and color_id = #{colorId}
+    </select>
+
+    <insert id="insertStock">
+        insert into stock_tb
+            (product_id, size_id, color_id, count, updated_at, is_sold_out)
+        values
+            (#{productId}, #{sizeId}, #{colorId}, #{count}, now(), if(#{count}=0, 1, 0))
+    </insert>
+
+    <select id="findStocksByProductId" resultType="com.xmpy.demo.entity.Stock">
+        select
+            s.stock_id as stockId,
+            s.product_id as productId,
+            s.size_id as sizeId,
+            z.size_name as sizeName,
+            s.color_id as colorId,
+            c.color_name as colorName,
+            s.count as count,
+            s.is_sold_out as isSoldOut,
+            s.updated_at as updatedAt
+        from stock_tb s
+            inner join size_tb z on z.size_id = s.size_id
+            inner join color_tb c on c.color_id = s.color_id
+        where s.product_id = #{productId}
+        order by s.stock_id desc
+    </select>
+
+    <update id="updateStockCount">
+        update stock_tb
+        set
+            count = #{count},
+            is_sold_out = if(#{count}=0, 1, 0),
+            updated_at = now()
+        where stock_id = #{stockId}
+    </update>
+
+    <delete id="deleteStock">
+        delete from stock_tb
+        where stock_id = #{stockId}
+    </delete>
+
+    <!-- 주문 확정 -> 재고 차감 -->
+    <update id="decreaseStock"><![CDATA[
+        update stock_tb
+        set
+            count = count - #{quantity},
+            is_sold_out = if(count - #{quantity} <= 0, 1, 0),
+            updated_at = now()
+        where product_id = #{productId}
+          and size_id = #{sizeId}
+          and color_id = #{colorId}
+          and count >= #{quantity}
+        ]]></update>
+
+    <!-- 주문 취소/실패 -> 재고 복구 -->
+    <update id="restoreStock">
+        update stock_tb
+        set
+            count = count + #{quantity},
+            is_sold_out = 0,
+            updated_at = now()
+        where product_id = #{productId}
+          and size_id = #{sizeId}
+          and color_id = #{colorId}
+    </update>
+
+    <select id="findAllSizes" resultType="map">
+        select size_id, size_name
+        from size_tb
+        order by size_id asc
+    </select>
+
+    <select id="findAllColors" resultType="map">
+        select color_id, color_name
+        from color_tb
+        order by color_id asc
+    </select>
+
+</mapper>

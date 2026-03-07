@@ -1,17 +1,15 @@
-package com.xmpy.demo.entity;
+package com.xmpy.demo.dto.res.stock;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Stock {
+public class StockRespDto {
     private long stockId;
     private long productId;
     private long sizeId;
@@ -19,6 +17,6 @@ public class Stock {
     private long colorId;
     private String colorName;
     private int count;
-    private boolean isSoldOut;
-    private LocalDateTime updatedAt;
+    private int isSoldOut;
+    private String updatedAt;
 }
