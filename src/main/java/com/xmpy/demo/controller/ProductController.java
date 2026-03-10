@@ -22,7 +22,7 @@ public class ProductController {
     }
 
     // 상품 단건 조회 (Id로)
-    @GetMapping
+    @GetMapping("/{productId}")
     public Product getById(@PathVariable long productId) {
         return productService.getById(productId);
     }
@@ -40,7 +40,7 @@ public class ProductController {
     }
 
     // 상품 추가
-    @PutMapping
+    @PostMapping
     public int insert(@RequestBody Product product) {
         return productService.insert(product);
     }

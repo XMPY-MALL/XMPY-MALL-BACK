@@ -18,4 +18,7 @@ public class Stock {
     private long colorId;
     private boolean isSoldOut;
     private LocalDateTime updateAt;
+
+    private Color color;  // 그래프 탐색용
+    private Size size;    // 그래프 탐색용
 }
