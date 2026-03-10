@@ -10,6 +10,7 @@
 
 <mapper namespace="com.xmpy.demo.mapper.ProductCategoryMapper">
 
+
     <!-- product_category_tb -> entity.ProductCategory -->
     <resultMap id="ProductCategoryMap" type="com.xmpy.demo.entity.ProductCategory">
         <id     property="categoryId"         column="category_id"/>
@@ -42,5 +43,22 @@
         DELETE FROM product_category_tb
         WHERE category_id = #{id}
     </delete>
+
+
+    <select id="findMenuRows"
+            resultType="com.xmpy.demo.dto.res.product.ProductCategoryMenuRowRes">
+
+        SELECT
+        pc.category_id          AS productCategoryId,
+        pc.category_name        AS productCategoryName,
+        cd.category_detail_id   AS productCategoryDetailId,
+        cd.category_detail_name AS productCategoryDetailName
+        FROM product_tb p
+        JOIN product_category_tb pc ON pc.category_id = p.category_id
+        JOIN category_tb cd ON cd.category_detail_id = p.category_detail_id
+        ORDER BY pc.category_id, cd.category_detail_id
+
+    </select>
+
 
 </mapper>

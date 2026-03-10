@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -12,5 +14,6 @@ import lombok.NoArgsConstructor;
 public class ProductCategory {
     private long categoryId;
     private String categoryName;
+    private List<ProductCategoryDetail> productCategoryDetail;
     private String categoryDetailName;
 }

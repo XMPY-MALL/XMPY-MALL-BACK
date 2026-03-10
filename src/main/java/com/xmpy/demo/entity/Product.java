@@ -3,6 +3,7 @@ package com.xmpy.demo.entity;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -15,11 +16,13 @@ public class Product {
     private String productName;
     private String description;
     private boolean best;
-    private String imgUrl;
     private int price;
     private String quickRundown;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+
+    private List<ProductThumbnail> productThumbnails;
 
 
 }
