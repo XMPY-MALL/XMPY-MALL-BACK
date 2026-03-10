@@ -20,5 +20,8 @@ public class Stock {
     private String colorName;
     private int count;
     private boolean isSoldOut;
-    private LocalDateTime updatedAt;
+    private LocalDateTime updateAt;
+
+    private Color color;  // 그래프 탐색용
+    private Size size;    // 그래프 탐색용
 }

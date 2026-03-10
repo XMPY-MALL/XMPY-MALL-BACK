@@ -16,8 +16,8 @@ public class Review {
     private long productId;
     private long orderItemId;
     private long userId;
-    private int rating;
     private String content;
     private LocalDateTime createdAt;
 
+    private User user; // 그래프 탐색용 필드 추가임여
 }
