@@ -1,5 +1,6 @@
 package com.xmpy.demo.service;
 
+import com.xmpy.demo.dto.res.stock.StockResByProductId;
 import com.xmpy.demo.entity.Stock;
 import com.xmpy.demo.mapper.StockMapper;
 import lombok.RequiredArgsConstructor;
@@ -8,12 +9,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class StockService {
 
     private final StockMapper stockMapper;
+
+    public StockResByProductId getStocks(long productId) {
+        // dto가 entity들을 종합해서 변환되게 캡슐화했어요
+        return StockResByProductId.from(stockMapper.findByProductId(productId));
+    }
 
     public List<Stock> getStocksByProduct(long productId) {
         return stockMapper.findStocksByProductId(productId);

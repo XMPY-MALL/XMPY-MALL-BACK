@@ -269,4 +269,17 @@
         WHERE product
     </delete>
 
+    <insert id="insertProduct" useGeneratedKeys="true" keyProperty="productId">
+        INSERT INTO product_tb (product_name, description, is_best, price, category_id, category_detail_id, created_at, updated_at)
+        VALUES (#{productName}, #{description}, 0, #{price}, #{categoryId}, #{categoryDetailId}, NOW(), NOW())
+    </insert>
+
+    <insert id="insertThumbnails">
+        INSERT INTO product_thumbnail_tb (product_id, product_url)
+        VALUES
+        <foreach collection="urls" item="url" separator=",">
+            (#{productId}, #{url})
+        </foreach>
+    </insert>
+
 </mapper>

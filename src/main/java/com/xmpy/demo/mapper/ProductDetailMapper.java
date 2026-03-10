@@ -21,4 +21,5 @@ public interface ProductDetailMapper {
     // 상세 상품 삭제
     int deleteById(@Param("productDetailId") long productDetailId);
 
+
 }

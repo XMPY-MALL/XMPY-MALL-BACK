@@ -36,15 +36,16 @@ public interface ProductMapper {
     // 후드, 맨투맨 상품 조회
     List<Product> findByDetailId(@Param("categoryDetailId") long categoryDetailId);
 
-
-    // 상품 등록
-    int insert (Product product);
-
     // 상품 수정
     int update (Product product);
 
     // 상품 삭제
     int deleteById(@Param("productId") long productId);
+
+    // 상품등록
+    void insertProduct(Product product);
+    // 하나의 상품에 대해 여러 썸네일 등록
+    void insertThumbnails(@Param("productId") long productId, @Param("urls") List<String> urls);
 
 
 }

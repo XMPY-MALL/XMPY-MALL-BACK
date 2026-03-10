@@ -10,6 +10,9 @@ import java.util.Map;
 @Mapper
 public interface StockMapper {
 
+    List<Stock> findByProductId(@Param("productId") long productId);
+
+
     int countByOption(@Param("productId") long productId,
                       @Param("sizeId") long sizeId,
                       @Param("colorId") long colorId);
@@ -41,4 +44,5 @@ public interface StockMapper {
     List<Map<String, Object>> findAllSizes();
 
     List<Map<String, Object>> findAllColors();
+
 }
