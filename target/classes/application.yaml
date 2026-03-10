@@ -16,17 +16,26 @@ spring:
 # xmpy-mall 서버 연결 완료
 
   datasource:
-    url: jdbc:mysql://localhost:3306/xmpy
     driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/xmpy?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
     password: 1q2w3e4r!
 
 mybatis:
   mapper-locations: classpath:mappers/*.xml
   type-aliases-package: com.xmpy.demo.entity
+  configuration:
+    map-underscore-to-camel-case: true
 # mapper 연결 완료
 
-jwt: # 시크릿 난수 생성 터미널 명령어 : openssl rand -base64 64
-  secret: "XLsJxKSTztZmOcjPj8qQNZpirpiuW3uPTuPeAI/ZkWMRvUGf+yi3VwnrLst8/WMRj1VBKHA0AQ2hYVNubcL8Tw=="
-  access-expire-millis: 900000 # 15분 -> ms
-  refresh-expire-millis: 86400000 # 1일 1 * 24 * 60 * 60 * 1000
+---
+
+spring:
+  config:
+    activate:
+      on-profile: secret
+
+jwt:
+  secret: "6Y9tMfkTPJPDQCCNJDRCaohhhCSQA3wONNmeC7pN9lISm3H4KBpid9HyF5opwPxjQbXgmzj4V0h3cH0X0ldrMg=="
+  access-expire-millis: 900000
+  refresh-expire-millis: 86400000
