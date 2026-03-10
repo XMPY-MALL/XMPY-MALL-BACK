@@ -98,9 +98,9 @@ public class SecurityConfig {
             // 그 외 모든 경로에 대해서는 검사하겠다.
             // auth.anyRequest().authenticated();
 
-
-            // 사장 권한 설정
-            auth.requestMatchers("/admin/**").hasRole("ADMIN");
+//
+//            // 사장 권한 설정
+//            auth.requestMatchers("/admin/**").hasRole("ADMIN");
             // 우선은, 모두 통과
             auth.anyRequest().permitAll();
         });
