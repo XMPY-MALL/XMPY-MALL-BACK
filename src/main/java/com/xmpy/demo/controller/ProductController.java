@@ -1,9 +1,13 @@
 package com.xmpy.demo.controller;
 
+import com.xmpy.demo.dto.req.product.ProductSearchReq;
+import com.xmpy.demo.dto.res.product.ProductListRowRes;
+import com.xmpy.demo.dto.res.product.ProductRes;
 import com.xmpy.demo.entity.Product;
 import com.xmpy.demo.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
 
 
 import java.util.List;
@@ -18,18 +22,20 @@ public class ProductController {
     // 전체 상품 조회
     @GetMapping
     public List<Product> getAll() {
+        System.out.println("gogogogo");
         return productService.getAll();
     }
 
-    // 상품 단건 조회 (Id로)
+    // 단건조회
     @GetMapping("/{productId}")
-    public Product getById(@PathVariable long productId) {
-        return productService.getById(productId);
+    public ProductRes getById(@PathVariable long productId) {
+        return productService.getProductDetail(productId);
     }
+
 
     // 카테고리(상의/ 하의)로 조회
     @GetMapping("/category/{categoryId}")
-    public List<Product> getBycategoryId(@PathVariable long categoryId) {
+    public List<Product> getByCategoryId(@PathVariable long categoryId) {
         return productService.getByCategoryId(categoryId);
     }
 
@@ -39,6 +45,15 @@ public class ProductController {
         return productService.getByDetailId(categoryDetailId);
     }
 
+    // 상품검색/필터/정렬 (모든유저사용가능)
+    // product/search?keyword=후드&sort=best
+    // 후드라는 이름이 들어간 상품만 조회
+    @GetMapping("/search")
+    public List<ProductListRowRes> search(ProductSearchReq req) {
+        // @RequestParam을 DTO로 한번에
+        return productService.search(req);
+    }
+
     // 상품 추가
     @PostMapping
     public int insert(@RequestBody Product product) {
@@ -46,8 +61,9 @@ public class ProductController {
     }
 
     // 상품 수정
-    @PutMapping
-    public int update(@RequestBody Product product) {
+    @PutMapping("/{productId}")
+    public int update(@PathVariable long productId, @RequestBody Product product) {
+        product.setProductId(productId);
         return productService.update(product);
     }
 
@@ -55,6 +71,21 @@ public class ProductController {
     @DeleteMapping("/{productId}")
     public int delete(@PathVariable long productId) {
         return productService.delete(productId);
+    }
+
+    // 베스트 여부 변경 (admin)
+    // patch/product/1/best?best=true
+
+    @PatchMapping("/{productId}/best")
+    public int setBest(@PathVariable long productId, @RequestParam boolean best) {
+        return productService.setBest(productId, best);
+
+    }
+
+    // 모든유저가 get으로 볼수있음
+    @GetMapping("/product/best")
+    public ResponseEntity<?> bestList() {
+        return ResponseEntity.ok(productService.bestList());
     }
 
 }
