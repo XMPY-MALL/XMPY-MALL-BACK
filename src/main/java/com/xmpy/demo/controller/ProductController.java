@@ -1,6 +1,7 @@
 package com.xmpy.demo.controller;
 
 import com.xmpy.demo.dto.req.product.ProductAddReq;
+import com.xmpy.demo.dto.res.product.SubMenuResDto;
 import com.xmpy.demo.entity.Product;
 import com.xmpy.demo.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +37,12 @@ public class ProductController {
         return productService.getByCategoryId(categoryId);
     }
 
-    // 디테일(맨투맨 / 반팔 / 긴바지 ) 로 조회
+    // 디테일(맨투맨 / 반팔 / 긴바지) 로 조회 - 페이지네이션 추가
     @GetMapping("/detail/{categoryDetailId}")
-    public List<Product> getByDetailId(@PathVariable long categoryDetailId) {
-        return productService.getByDetailId(categoryDetailId);
+    public ResponseEntity<SubMenuResDto> getByDetailId(
+            @PathVariable long categoryDetailId,
+            @RequestParam(defaultValue = "1") int page) {
+        return ResponseEntity.ok(productService.getCategoryDetailPaging(categoryDetailId, page));
     }
 
     // 상품 추가

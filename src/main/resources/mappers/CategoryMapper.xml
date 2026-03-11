@@ -9,30 +9,51 @@
     ========================= -->
 
 
-    <mapper namespace="com.xmpy.demo.mapper.CategoryMapper">
+<mapper namespace="com.xmpy.demo.mapper.CategoryMapper">
 
-        <!-- category_tb -> entity.Category -->
-        <resultMap id="CategoryMap" type="com.xmpy.demo.entity.Category">
-            <id     property="categoryDetailId"   column="category_detail_id"/>
+    <resultMap id="categoryResultMap" type="com.xmpy.demo.entity.ProductCategory">
+        <id property="categoryId" column="category_id"/>
+        <result property="categoryName" column="category_name"/>
+        <collection property="details" ofType="com.xmpy.demo.entity.ProductCategoryDetail">
+            <id property="categoryDetailId" column="category_detail_id"/>
+            <result property="categoryId" column="category_id"/>
             <result property="categoryDetailName" column="category_detail_name"/>
-        </resultMap>
+        </collection>
+    </resultMap>
 
-        <!-- 카테고리 디테일 전체조회 -->
-        <select id="findAll" resultMap="CategoryMap">
-            SELECT
-            c.category_detail_id,
-            c.category_detail_name
-            FROM category_tb c
-            ORDER BY c.category_detail_id ASC
-        </select>
+    <select id="findAllWithDetails" resultMap="categoryResultMap">
+        SELECT
+        c.category_id,
+        c.category_name,
+        cd.category_detail_id,
+        cd.category_detail_name
+        FROM product_category_tb c
+        LEFT JOIN product_category_detail_tb cd ON c.category_id = cd.category_id
+        ORDER BY c.category_id, cd.category_detail_id
+    </select>
 
-        <!-- 디테일 Id로 단건 조회 -->
-        <select id="findByCategoryDetailId" parameterType="long" resultMap="CategoryMap">
-            SELECT
-            c.category_detail_id,
-            c.category_detail_name
-            FROM category_tb c
-            WHERE c.category_detail_id = #{categoryDetailId}
-        </select>
+    <!-- category_tb -> entity.Category -->
+    <resultMap id="CategoryMap" type="com.xmpy.demo.entity.ProductCategoryDetail">
+        <id     property="categoryDetailId"   column="category_detail_id"/>
+        <result property="categoryDetailName" column="category_detail_name"/>
+    </resultMap>
 
-    </mapper>
+    <!-- 카테고리 디테일 전체조회 -->
+    <select id="findAll" resultMap="CategoryMap">
+        SELECT
+        c.category_detail_id,
+        c.category_detail_name
+        FROM category_tb c
+        ORDER BY c.category_detail_id ASC
+    </select>
+
+    <!-- 디테일 Id로 단건 조회 -->
+    <select id="findByCategoryDetailId" parameterType="long" resultMap="CategoryMap">
+        SELECT
+        c.category_detail_id,
+        c.category_detail_name
+        FROM category_tb c
+        WHERE c.category_detail_id = #{categoryDetailId}
+    </select>
+
+</mapper>

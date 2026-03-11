@@ -1,17 +1,20 @@
 package com.xmpy.demo.service;
 import com.xmpy.demo.dto.req.product.ProductAddReq;
 import com.xmpy.demo.dto.res.product.ProductPagingRes;
+import com.xmpy.demo.dto.res.product.SubMenuResDto;
 import com.xmpy.demo.entity.Color;
 import com.xmpy.demo.entity.Product;
 import com.xmpy.demo.entity.ProductDetail;
 import com.xmpy.demo.entity.Size;
 import com.xmpy.demo.mapper.*;
+import com.xmpy.demo.view.ProductSubMenu;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -23,33 +26,40 @@ public class ProductService  {
     private final ColorMapper colorMapper;
     private final StockMapper stockMapper;
 
-    public ProductPagingRes getCategoryDetailPaging(
-            long categoryDetailId, int page) {
+    public SubMenuResDto getCategoryDetailPaging(long categoryDetailId, int page) {
+        if (page < 1) page = 1;
 
-        if (page < 1) {
-            page = 1;
-        }
-
-        int size = 15; // 한 페이지당 15개씩 나오게
-
-        // 총 갯수
+        int size = 15;
         int totalCount = productMapper.countByCategoryDetailId(categoryDetailId);
-
-        // 총 페이지 수
         int totalPages = Math.max(1, (totalCount + size - 1) / size);
+        int offset = (page - 1) * size;
 
-        // offset 계산
-        int offset = (page -1) * size;
+        List<ProductSubMenu> products = productMapper.findByCategoryDetailId(categoryDetailId, size, offset);
 
-        List<Product> list = productMapper.findByCategoryDetailId(categoryDetailId, size, offset);
+        List<Long> productIds = products.stream()
+                .map(ProductSubMenu::getProductId)
+                .toList();
 
-        return ProductPagingRes.builder()
-                .page(page)
-                .totalItemCount(totalCount)
+        Map<Long, Map<String, Object>> reviewCountMap = productIds.isEmpty()
+                ? Map.of()
+                : productMapper.findReviewCountByProductIds(productIds);
+
+        List<SubMenuResDto.SubMenuProductResDto> productDtos = products.stream()
+                .map(p -> {
+                    int reviewCount = reviewCountMap.containsKey(p.getProductId())
+                            ? ((Number) reviewCountMap.get(p.getProductId()).get("review_count")).intValue()
+                            : 0;
+                    return SubMenuResDto.SubMenuProductResDto.from(p, reviewCount);
+                })
+                .toList();
+
+        String categoryDetailName = products.isEmpty() ? "" : products.get(0).getCategoryDetailName();
+
+        return SubMenuResDto.builder()
+                .categoryDetailName(categoryDetailName)
                 .totalPages(totalPages)
-                .items(list)
+                .products(productDtos)
                 .build();
-
     }
 
     // 전체 상품 조회
