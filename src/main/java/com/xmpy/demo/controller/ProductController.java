@@ -67,7 +67,6 @@ public class ProductController {
         return productService.update(product);
     }
 
-
     // 상품 삭제
     @DeleteMapping("/{productId}")
     public int delete(@PathVariable long productId) {
