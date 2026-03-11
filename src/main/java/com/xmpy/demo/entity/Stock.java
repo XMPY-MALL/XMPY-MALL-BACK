@@ -1,9 +1,6 @@
 package com.xmpy.demo.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -24,4 +21,9 @@ public class Stock {
 
     private Color color;  // 그래프 탐색용
     private Size size;    // 그래프 탐색용
+
+    // 롬복 boolean 타입 setter는 명명이 다름
+    public void setIsSoldOut(boolean soldOut) {
+        isSoldOut = soldOut;
+    }
 }

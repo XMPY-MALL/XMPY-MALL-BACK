@@ -1,8 +1,11 @@
 package com.xmpy.demo.controller;
 
+import com.xmpy.demo.dto.req.product.ProductAddReq;
 import com.xmpy.demo.entity.Product;
 import com.xmpy.demo.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -41,8 +44,9 @@ public class ProductController {
 
     // 상품 추가
     @PostMapping
-    public int insert(@RequestBody Product product) {
-        return productService.insert(product);
+    public ResponseEntity<?> addProduct(@RequestBody ProductAddReq req) {
+        productService.addProduct(req);
+        return ResponseEntity.status(HttpStatus.CREATED).body("상품 추가 완료");
     }
 
     // 상품 수정

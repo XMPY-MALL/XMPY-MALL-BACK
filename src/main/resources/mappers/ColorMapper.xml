@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xmpy.demo.mapper.ColorMapper">
+
+    <select id="findIdByName" resultType="java.lang.Long">
+        SELECT color_id FROM color_tb WHERE color_name = #{colorName}
+    </select>
+
+    <insert id="insertColor" useGeneratedKeys="true" keyProperty="colorId">
+        INSERT INTO color_tb (color_name) VALUES (#{colorName})
+    </insert>
+
+</mapper>

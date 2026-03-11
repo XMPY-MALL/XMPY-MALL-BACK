@@ -1,9 +1,14 @@
 package com.xmpy.demo.service;
+import com.xmpy.demo.dto.req.product.ProductAddReq;
 import com.xmpy.demo.dto.res.product.ProductPagingRes;
+import com.xmpy.demo.entity.Color;
 import com.xmpy.demo.entity.Product;
+import com.xmpy.demo.entity.ProductDetail;
+import com.xmpy.demo.entity.Size;
+import com.xmpy.demo.mapper.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.xmpy.demo.mapper.ProductMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,6 +18,10 @@ import java.util.List;
 public class ProductService  {
 
     private final ProductMapper productMapper;
+    private final ProductDetailMapper productDetailMapper;
+    private final SizeMapper sizeMapper;
+    private final ColorMapper colorMapper;
+    private final StockMapper stockMapper;
 
     public ProductPagingRes getCategoryDetailPaging(
             long categoryDetailId, int page) {
@@ -64,8 +73,8 @@ public class ProductService  {
     }
 
     // 상품 등록
-    public int insert(Product product) {
-         return productMapper.insert(product);
+    public void insert(Product product) {
+         productMapper.insertProduct(product);
     }
 
 
@@ -82,6 +91,61 @@ public class ProductService  {
     }
 
     // 다건 상품 삭제
+
+    @Transactional
+    public void addProduct(ProductAddReq req) {
+        // 1. product INSERT
+        Product product = Product.builder()
+                .productName(req.getProductName())
+                .description(req.getDescription())
+                .price(req.getPrice())
+                .categoryId(req.getSelectedCategoryId())
+                .categoryDetailId(req.getSelectedSubCategoryId())
+                .build();
+        productMapper.insertProduct(product);
+
+        // 2. thumbnail INSERT
+        productMapper.insertThumbnails(product.getProductId(), req.getImageUrls());
+
+        // 3. detail INSERT
+        ProductDetail detail = ProductDetail.builder()
+                .productId(product.getProductId())
+                .productDetailContent(req.getDetailContent())
+                .build();
+        productDetailMapper.insert(detail);
+
+        // 4. stock INSERT
+        for (ProductAddReq.StockReq stockReq : req.getStocks()) {
+            long sizeId = getOrCreateSizeId(stockReq.getSize());
+            long colorId = getOrCreateColorId(stockReq.getColor());
+            stockMapper.insertStock(
+                    product.getProductId(),
+                    sizeId,
+                    colorId,
+                    stockReq.getQuantity()
+            );
+        }
+    }
+
+    private long getOrCreateSizeId(String sizeName) {
+        Long sizeId = sizeMapper.findIdByName(sizeName);
+        if (sizeId == null) {
+            Size size = Size.builder().sizeName(sizeName).build();
+            sizeMapper.insertSize(size);
+            sizeId = size.getSizeId();
+        }
+        return sizeId;
+    }
+
+    private long getOrCreateColorId(String colorName) {
+        Long colorId = colorMapper.findIdByName(colorName);
+        if (colorId == null) {
+            Color color = Color.builder().colorName(colorName).build();
+            colorMapper.insertColor(color);
+            colorId = color.getColorId();
+        }
+        return colorId;
+    }
 
 
 }
