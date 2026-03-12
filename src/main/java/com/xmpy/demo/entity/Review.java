@@ -19,5 +19,9 @@ public class Review {
     private String content;
     private LocalDateTime createdAt;
 
-    private User user; // 그래프 탐색용 필드 추가임여
+    private String adminReply;
+    private LocalDateTime adminReplyCreatedAt;
+    private LocalDateTime adminReplyUpdatedAt;
+
+    private User user;
 }

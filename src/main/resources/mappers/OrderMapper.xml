@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xmpy.demo.mapper.OrderMapper">
+
+    <select id="findAdminOrders" resultType="com.xmpy.demo.dto.res.order.OrderRes">
+        SELECT
+            o.orders_id AS orderId,
+            u.user_name AS customerName,
+            GROUP_CONCAT(
+                    CONCAT(
+                            COALESCE(p.product_name, '상품정보없음'),
+                            '(',
+                            COALESCE(c.color_name, '-'),
+                            ' / ',
+                            COALESCE(s.size_name, '-'),
+                            ') x',
+                            oi.quantity
+                    )
+                        ORDER BY oi.order_item_id
+                SEPARATOR ' | '
+            ) AS productSummary,
+            o.total_price AS totalPrice,
+            o.created_at AS orderDate,
+            o.status AS status
+        FROM orders_tb o
+                 JOIN user_tb u
+                      ON o.user_id = u.user_id
+                 LEFT JOIN order_item_tb oi
+                           ON o.orders_id = oi.orders_id
+                 LEFT JOIN product_tb p
+                           ON oi.product_id = p.product_id
+                 LEFT JOIN color_tb c
+                           ON oi.color_id = c.color_id
+                 LEFT JOIN size_tb s
+                           ON oi.size_id = s.size_id
+        GROUP BY o.orders_id, u.user_name, o.total_price, o.created_at, o.status
+        ORDER BY o.created_at DESC, o.orders_id DESC
+    </select>
+
+    <update id="updateOrderStatus">
+        UPDATE orders_tb
+        SET status = #{status},
+            updated_at = NOW()
+        WHERE orders_id = #{ordersId}
+    </update>
+
+</mapper>

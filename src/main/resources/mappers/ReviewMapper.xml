@@ -50,4 +50,37 @@
             product_id = #{productId}
     </select>
 
+    <select id="findAdminReviews" resultType="com.xmpy.demo.dto.res.review.AdminReviewRes">
+        SELECT
+            r.review_id AS reviewId,
+            u.user_name AS userName,
+            COALESCE(p.product_name, '상품정보없음') AS productName,
+            oi.orders_id AS orderId,
+            r.content AS content,
+            r.created_at AS createdAt,
+            r.admin_reply AS adminReply,
+            r.admin_reply_created_at AS adminReplyCreatedAt,
+            r.admin_reply_updated_at AS adminReplyUpdatedAt
+        FROM review_tb r
+                 JOIN user_tb u
+                      ON r.user_id = u.user_id
+                 LEFT JOIN order_item_tb oi
+                           ON r.order_item_id = oi.order_item_id
+                 LEFT JOIN product_tb p
+                           ON oi.product_id = p.product_id
+        ORDER BY r.created_at DESC, r.review_id DESC
+    </select>
+
+    <update id="updateAdminReply">
+        UPDATE review_tb
+        SET
+            admin_reply = #{adminReply},
+            admin_reply_created_at = CASE
+                                         WHEN admin_reply_created_at IS NULL THEN NOW()
+                                         ELSE admin_reply_created_at
+                END,
+            admin_reply_updated_at = NOW()
+        WHERE review_id = #{reviewId}
+    </update>
+
 </mapper>
