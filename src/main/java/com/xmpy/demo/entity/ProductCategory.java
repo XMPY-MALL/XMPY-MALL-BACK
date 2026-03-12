@@ -7,13 +7,10 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+
+@Data @Builder @AllArgsConstructor @NoArgsConstructor
 public class ProductCategory {
     private long categoryId;
     private String categoryName;
-    private List<ProductCategoryDetail> productCategoryDetail;
-    private String categoryDetailName;
+    private List<ProductCategoryDetail> details;
 }

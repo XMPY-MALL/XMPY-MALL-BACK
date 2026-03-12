@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xmpy.demo.mapper.SizeMapper">
+
+    <select id="findIdByName" resultType="java.lang.Long">
+        SELECT size_id FROM size_tb WHERE size_name = #{sizeName}
+    </select>
+
+    <insert id="insertSize" useGeneratedKeys="true" keyProperty="sizeId">
+        INSERT INTO size_tb (size_name) VALUES (#{sizeName})
+    </insert>
+
+</mapper>

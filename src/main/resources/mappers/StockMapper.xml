@@ -5,6 +5,44 @@
 
 <mapper namespace="com.xmpy.demo.mapper.StockMapper">
 
+    <resultMap id="ColorResult" type="com.xmpy.demo.entity.Color">
+        <id     property="colorId"   column="color_id"/>
+        <result property="colorName" column="color_name"/>
+    </resultMap>
+
+    <resultMap id="SizeResult" type="com.xmpy.demo.entity.Size">
+        <id     property="sizeId"   column="size_id"/>
+        <result property="sizeName" column="size_name"/>
+    </resultMap>
+
+    <resultMap id="StockWithOptions" type="com.xmpy.demo.entity.Stock">
+        <id     property="stockId"   column="stock_id"/>
+        <result property="productId" column="product_id"/>
+        <result property="count"     column="count"/>
+        <result property="isSoldOut" column="is_sold_out"/>
+        <result property="updatedAt" column="updated_at"/>
+        <association property="color" resultMap="ColorResult"/>
+        <association property="size"  resultMap="SizeResult"/>
+    </resultMap>
+
+    <select id="findByProductId" resultMap="StockWithOptions">
+        SELECT
+        s.stock_id,
+        s.product_id,
+        s.count,
+        s.is_sold_out,
+        s.updated_at,
+        c.color_id,
+        c.color_name,
+        sz.size_id,
+        sz.size_name
+        FROM stock_tb s
+        JOIN color_tb c  ON s.color_id = c.color_id
+        JOIN size_tb sz   ON s.size_id  = sz.size_id
+        WHERE s.product_id = #{productId}
+    </select>
+
+
     <select id="countByOption" resultType="int">
         select count(*)
         from stock_tb

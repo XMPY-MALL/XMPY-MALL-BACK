@@ -9,9 +9,15 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/stocks")
 public class StockController {
 
     private final StockService stockService;
+
+    @GetMapping
+    public ResponseEntity<?> getStocks(@RequestParam long productId) {
+        return ResponseEntity.ok(stockService.getStocks(productId));
+    }
 
     @GetMapping("/sizes")
     public ResponseEntity<?> sizes() {
