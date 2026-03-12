@@ -1,11 +1,15 @@
 package com.xmpy.demo.controller;
 
+import com.xmpy.demo.dto.req.product.ProductAddReq;
+import com.xmpy.demo.dto.res.product.SubMenuResDto;
 import com.xmpy.demo.dto.req.product.ProductSearchReq;
 import com.xmpy.demo.dto.res.product.ProductListRowRes;
 import com.xmpy.demo.dto.res.product.ProductRes;
 import com.xmpy.demo.entity.Product;
 import com.xmpy.demo.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
@@ -39,10 +43,12 @@ public class ProductController {
         return productService.getByCategoryId(categoryId);
     }
 
-    // 디테일(맨투맨 / 반팔 / 긴바지 ) 로 조회
+    // 디테일(맨투맨 / 반팔 / 긴바지) 로 조회 - 페이지네이션 추가
     @GetMapping("/detail/{categoryDetailId}")
-    public List<Product> getByDetailId(@PathVariable long categoryDetailId) {
-        return productService.getByDetailId(categoryDetailId);
+    public ResponseEntity<SubMenuResDto> getByDetailId(
+            @PathVariable long categoryDetailId,
+            @RequestParam(defaultValue = "1") int page) {
+        return ResponseEntity.ok(productService.getCategoryDetailPaging(categoryDetailId, page));
     }
 
     // 상품검색/필터/정렬 (모든유저사용가능)
@@ -56,8 +62,9 @@ public class ProductController {
 
     // 상품 추가
     @PostMapping
-    public int insert(@RequestBody Product product) {
-        return productService.insert(product);
+    public ResponseEntity<?> addProduct(@RequestBody ProductAddReq req) {
+        productService.addProduct(req);
+        return ResponseEntity.status(HttpStatus.CREATED).body("상품 추가 완료");
     }
 
     // 상품 수정

@@ -1,56 +1,68 @@
 package com.xmpy.demo.service;
-
-
-import com.xmpy.demo.dto.req.product.ProductSearchReq;
-import com.xmpy.demo.dto.res.product.*;
+import com.xmpy.demo.dto.req.product.ProductAddReq;
+import com.xmpy.demo.dto.res.product.ProductPagingRes;
+import com.xmpy.demo.dto.res.product.SubMenuResDto;
+import com.xmpy.demo.entity.Color;
 import com.xmpy.demo.entity.Product;
-import com.xmpy.demo.entity.ProductThumbnail;
-import com.xmpy.demo.exeption.ProductException;
+import com.xmpy.demo.entity.ProductDetail;
+import com.xmpy.demo.entity.Size;
+import com.xmpy.demo.mapper.*;
+import com.xmpy.demo.view.ProductSubMenu;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import com.xmpy.demo.mapper.ProductMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService  {
 
     private final ProductMapper productMapper;
+    private final ProductDetailMapper productDetailMapper;
+    private final SizeMapper sizeMapper;
+    private final ColorMapper colorMapper;
+    private final StockMapper stockMapper;
 
-    public ProductPagingRes getCategoryDetailPaging(
-            long categoryDetailId, int page) {
+    public SubMenuResDto getCategoryDetailPaging(long categoryDetailId, int page) {
+        if (page < 1) page = 1;
 
-        if (page < 1) {
-            page = 1;
-        }
-
-        int size = 15; // 한 페이지당 15개씩 나오게
-
-        // 총 갯수
+        int size = 15;
         int totalCount = productMapper.countByCategoryDetailId(categoryDetailId);
-
-        // 총 페이지 수
         int totalPages = Math.max(1, (totalCount + size - 1) / size);
+        int offset = (page - 1) * size;
 
-        // offset 계산
-        int offset = (page -1) * size;
+        List<ProductSubMenu> products = productMapper.findByCategoryDetailId(categoryDetailId, size, offset);
 
-        List<Product> list = productMapper.findByCategoryDetailId(categoryDetailId, size, offset);
+        List<Long> productIds = products.stream()
+                .map(ProductSubMenu::getProductId)
+                .toList();
 
-        return ProductPagingRes.builder()
-                .page(page)
-                .totalItemCount(totalCount)
+        Map<Long, Map<String, Object>> reviewCountMap = productIds.isEmpty()
+                ? Map.of()
+                : productMapper.findReviewCountByProductIds(productIds);
+
+        List<SubMenuResDto.SubMenuProductResDto> productDtos = products.stream()
+                .map(p -> {
+                    int reviewCount = reviewCountMap.containsKey(p.getProductId())
+                            ? ((Number) reviewCountMap.get(p.getProductId()).get("review_count")).intValue()
+                            : 0;
+                    return SubMenuResDto.SubMenuProductResDto.from(p, reviewCount);
+                })
+                .toList();
+
+        String categoryDetailName = products.isEmpty() ? "" : products.get(0).getCategoryDetailName();
+
+        return SubMenuResDto.builder()
+                .categoryDetailName(categoryDetailName)
                 .totalPages(totalPages)
-                .items(list)
+                .products(productDtos)
                 .build();
-
     }
 
     // 전체 상품 조회
@@ -104,13 +116,8 @@ public class ProductService  {
     }
 
     // 상품 등록
-    public int insert(Product product) {
-
-        // createAt/updateAt을 넣어서
-        // db에 null 들어가는 문제, 프론트 누락 문제 막기
-        product.setUpdatedAt(LocalDateTime.now());
-        product.setCreatedAt(LocalDateTime.now());
-        return productMapper.insert(product);
+    public void insert(Product product) {
+         productMapper.insertProduct(product);
     }
 
 
@@ -175,6 +182,61 @@ public class ProductService  {
         }
 
         return result;
+    }
+
+    @Transactional
+    public void addProduct(ProductAddReq req) {
+        // 1. product INSERT
+        Product product = Product.builder()
+                .productName(req.getProductName())
+                .description(req.getDescription())
+                .price(req.getPrice())
+                .categoryId(req.getSelectedCategoryId())
+                .categoryDetailId(req.getSelectedSubCategoryId())
+                .build();
+        productMapper.insertProduct(product);
+
+        // 2. thumbnail INSERT
+        productMapper.insertThumbnails(product.getProductId(), req.getImageUrls());
+
+        // 3. detail INSERT
+        ProductDetail detail = ProductDetail.builder()
+                .productId(product.getProductId())
+                .productDetailContent(req.getDetailContent())
+                .build();
+        productDetailMapper.insert(detail);
+
+        // 4. stock INSERT
+        for (ProductAddReq.StockReq stockReq : req.getStocks()) {
+            long sizeId = getOrCreateSizeId(stockReq.getSize());
+            long colorId = getOrCreateColorId(stockReq.getColor());
+            stockMapper.insertStock(
+                    product.getProductId(),
+                    sizeId,
+                    colorId,
+                    stockReq.getQuantity()
+            );
+        }
+    }
+
+    private long getOrCreateSizeId(String sizeName) {
+        Long sizeId = sizeMapper.findIdByName(sizeName);
+        if (sizeId == null) {
+            Size size = Size.builder().sizeName(sizeName).build();
+            sizeMapper.insertSize(size);
+            sizeId = size.getSizeId();
+        }
+        return sizeId;
+    }
+
+    private long getOrCreateColorId(String colorName) {
+        Long colorId = colorMapper.findIdByName(colorName);
+        if (colorId == null) {
+            Color color = Color.builder().colorName(colorName).build();
+            colorMapper.insertColor(color);
+            colorId = color.getColorId();
+        }
+        return colorId;
     }
 
 

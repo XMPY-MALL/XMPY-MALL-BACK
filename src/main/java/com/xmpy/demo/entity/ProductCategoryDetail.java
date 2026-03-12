@@ -1,13 +1,16 @@
 package com.xmpy.demo.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
 @Data
-@Setter
-@Getter
+@NoArgsConstructor
+@Builder
 public class ProductCategoryDetail {
     private long categoryDetailId;
+    private long categoryId;
     private String categoryDetailName;
 }

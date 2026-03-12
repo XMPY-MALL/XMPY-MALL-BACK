@@ -46,6 +46,8 @@
         )
     </insert>
 
+
+
     <!-- 상세 상품 수정 -->
     <update id="update" parameterType="com.xmpy.demo.entity.ProductDetail">
         UPDATE product_detail_tb
