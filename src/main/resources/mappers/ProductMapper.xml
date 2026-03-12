@@ -67,12 +67,29 @@
     </select>
 
     <!-- 상품 단건 조회 -->
-    <select id="findById" parameterType="long" resultMap="ProductMap">
+    <select id="findById" parameterType="long" resultMap="ProductWithThumbnails">
         SELECT
-        product_id, product_name, description, is_best, img_url,
-        price, quick_rundown, category_id, created_at, updated_at, category_detail_id
-        FROM product_tb
-        WHERE product_id = #{productId}
+            p.product_id,
+            p.category_id,
+            p.category_detail_id,
+            p.product_name,
+            p.description,
+            p.is_best AS best,
+            p.price,
+            p.quick_rundown,
+            p.created_at,
+            p.updated_at,
+            t.product_thumnail_id,
+            t.product_url,
+            d.product_detail_content
+        FROM
+            product_tb p
+        LEFT JOIN
+            product_thumbnail_tb t ON p.product_id = t.product_id
+        LEFT JOIN
+            product_detail_tb d ON p.product_id = d.product_id
+        WHERE
+            p.product_id = #{productId}
     </select>
 
     <!-- 대분류(category_id) 상품 조회 -->
@@ -162,15 +179,16 @@
     <!-- 상품 검색/필터/정렬 -->
     <select id="search" resultType="com.xmpy.demo.dto.res.product.ProductListRowRes">
         SELECT
-        p.product_id AS productId,
-        p.product_name AS productName,
-        p.price AS price,
-        p.img_url AS imgUrl,
-        p.is_best AS best,
-        p.category_id AS categoryId,
-        p.category_detail_id AS categoryDetailId,
-        p.quick_rundown AS quickRundown
-        FROM product_tb p
+            p.product_id AS productId,
+            p.product_name AS productName,
+            p.price AS price,
+            p.img_url AS imgUrl,
+            p.is_best AS best,
+            p.category_id AS categoryId,
+            p.category_detail_id AS categoryDetailId,
+            p.quick_rundown AS quickRundown
+        FROM
+            product_tb p
         <where>
             <if test="req.keyword != null and req.keyword != ''">
                 p.product_name LIKE CONCAT('%', #{req.keyword}, '%')
