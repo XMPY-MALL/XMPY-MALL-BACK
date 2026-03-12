@@ -65,8 +65,11 @@ public class ProductService  {
     }
 
     // 전체 상품 조회
-    public List<Product> getAll() {
-        return productMapper.findAll();
+    public List<AdminProductStockRes> getAll() {
+
+        return productMapper.findAll().stream()
+                .map(AdminProductStockRes::from)
+                .toList();
     }
 
     // 상품 상의/ 하의 / 아우터 이런식으로 조회

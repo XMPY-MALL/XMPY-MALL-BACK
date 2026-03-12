@@ -30,7 +30,7 @@ public class StockController {
     }
 
     // 재고관리 리스트
-    @GetMapping("/admin/products/{productId}/stocks")
+    @GetMapping("/admin/products/{productId}")
     public ResponseEntity<?> list(@PathVariable long productId) {
         try {
             return ResponseEntity.ok(stockService.getStocksByProduct(productId));

@@ -40,7 +40,6 @@
         <result property="productName"      column="product_name"/>
         <result property="description"      column="description"/>
         <result property="best"             column="is_best"/>
-        <result property="imgUrl"           column="img_url"/>
         <result property="price"            column="price"/>
         <result property="quickRundown"     column="quick_rundown"/>
         <result property="categoryId"       column="category_id"/>
@@ -50,12 +49,21 @@
     </resultMap>
 
     <!-- 상품 전체 조회 -->
-    <select id="findAll" resultMap="ProductMap">
+    <select id="findAll" resultMap="ProductWithThumbnails">
         SELECT
-        product_id, product_name, description, is_best, img_url,
-        price, quick_rundown, category_id, created_at, updated_at, category_detail_id
-        FROM product_tb
-        ORDER BY created_at DESC
+        p.product_id,
+        p.category_id,
+        p.category_detail_id,
+        p.product_name,
+        p.description,
+        p.price,
+        p.quick_rundown,
+        p.created_at,
+        p.updated_at,
+        t.product_thumnail_id,
+        t.product_url
+        FROM product_tb p
+        LEFT JOIN product_thumbnail_tb t ON p.product_id = t.product_id
     </select>
 
     <!-- 상품 단건 조회 -->
@@ -233,7 +241,6 @@
         p.category_detail_id,
         p.product_name,
         p.description,
-        p.best,
         p.price,
         p.quick_rundown,
         p.created_at,

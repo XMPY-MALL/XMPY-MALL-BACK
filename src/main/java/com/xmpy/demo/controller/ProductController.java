@@ -1,6 +1,7 @@
 package com.xmpy.demo.controller;
 
 import com.xmpy.demo.dto.req.product.ProductAddReq;
+import com.xmpy.demo.dto.res.product.AdminProductStockRes;
 import com.xmpy.demo.dto.res.product.SubMenuResDto;
 import com.xmpy.demo.dto.req.product.ProductSearchReq;
 import com.xmpy.demo.dto.res.product.ProductListRowRes;
@@ -25,8 +26,7 @@ public class ProductController {
 
     // 전체 상품 조회
     @GetMapping
-    public List<Product> getAll() {
-
+    public List<AdminProductStockRes> getAll() {
         return productService.getAll();
     }
 
