@@ -1,11 +1,9 @@
 package com.xmpy.demo.service;
 import com.xmpy.demo.dto.req.product.ProductAddReq;
-import com.xmpy.demo.dto.res.product.ProductPagingRes;
-import com.xmpy.demo.dto.res.product.SubMenuResDto;
-import com.xmpy.demo.entity.Color;
-import com.xmpy.demo.entity.Product;
-import com.xmpy.demo.entity.ProductDetail;
-import com.xmpy.demo.entity.Size;
+import com.xmpy.demo.dto.req.product.ProductSearchReq;
+import com.xmpy.demo.dto.res.product.*;
+import com.xmpy.demo.entity.*;
+import com.xmpy.demo.exeption.ProductException;
 import com.xmpy.demo.mapper.*;
 import com.xmpy.demo.view.ProductSubMenu;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +16,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -107,13 +106,6 @@ public class ProductService  {
                 .build();
     }
 
-    public List<ProductListRowRes> search(ProductSearchReq req) {
-        // req가 null로 들어오는걸 방지
-        if(req == null) {
-            req = new ProductSearchReq();
-        }
-        return productMapper.search(req);
-    }
 
     // 상품 등록
     public void insert(Product product) {
@@ -135,8 +127,6 @@ public class ProductService  {
     public int setBest(long productId, boolean best) {
         return productMapper.updateBest(productId, best);
     }
-
-
 
     public List<ProductBestCategoryRes> bestList() {
 

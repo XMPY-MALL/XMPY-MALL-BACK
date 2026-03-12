@@ -16,6 +16,25 @@
         <result property="soldOut" column="is_sold_out"/>
     </resultMap>
 
+    <resultMap id="ProductWithThumbnails" type="com.xmpy.demo.entity.Product">
+        <id property="productId" column="product_id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="categoryDetailId" column="category_detail_id"/>
+        <result property="productName" column="product_name"/>
+        <result property="description" column="description"/>
+        <result property="best" column="best"/>
+        <result property="price" column="price"/>
+        <result property="quickRundown" column="quick_rundown"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+
+        <collection property="productThumbnails" ofType="com.xmpy.demo.entity.ProductThumbnail">
+            <id property="productThumbnailId" column="product_thumnail_id"/>
+            <result property="productId" column="product_id"/>
+            <result property="productUrl" column="product_url"/>
+        </collection>
+    </resultMap>
+
     <resultMap id="ProductMap" type="com.xmpy.demo.entity.Product">
         <id     property="productId"        column="product_id"/>
         <result property="productName"      column="product_name"/>
@@ -206,26 +225,8 @@
         ORDER BY p.created_at DESC
     </select>
 
-    <resultMap id="ProductWithThumbnails" type="com.xmpy.demo.entity.Product">
-        <id property="productId" column="product_id"/>
-        <result property="categoryId" column="category_id"/>
-        <result property="categoryDetailId" column="category_detail_id"/>
-        <result property="productName" column="product_name"/>
-        <result property="description" column="description"/>
-        <result property="best" column="best"/>
-        <result property="price" column="price"/>
-        <result property="quickRundown" column="quick_rundown"/>
-        <result property="createdAt" column="created_at"/>
-        <result property="updatedAt" column="updated_at"/>
 
-        <collection property="productThumbnails" ofType="com.xmpy.demo.entity.ProductThumbnail">
-            <id property="productThumbnailId" column="product_thumnail_id"/>
-            <result property="productId" column="product_id"/>
-            <result property="productUrl" column="product_url"/>
-        </collection>
-    </resultMap>
-
-    <select id="findById" resultMap="ProductWithThumbnails">
+    <select id="findViewById" resultMap="ProductWithThumbnails">
         SELECT
         p.product_id,
         p.category_id,
@@ -243,4 +244,6 @@
         LEFT JOIN product_thumbnail_tb t ON p.product_id = t.product_id
         WHERE p.product_id = #{productId}
     </select>
+
+
 </mapper>

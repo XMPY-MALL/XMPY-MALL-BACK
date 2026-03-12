@@ -51,15 +51,6 @@ public class ProductController {
         return ResponseEntity.ok(productService.getCategoryDetailPaging(categoryDetailId, page));
     }
 
-    // 상품검색/필터/정렬 (모든유저사용가능)
-    // product/search?keyword=후드&sort=best
-    // 후드라는 이름이 들어간 상품만 조회
-    @GetMapping("/search")
-    public List<ProductListRowRes> search(ProductSearchReq req) {
-        // @RequestParam을 DTO로 한번에
-        return productService.search(req);
-    }
-
     // 상품 추가
     @PostMapping
     public ResponseEntity<?> addProduct(@RequestBody ProductAddReq req) {
