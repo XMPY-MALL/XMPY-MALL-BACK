@@ -1,6 +1,5 @@
 package com.xmpy.demo.config;
 
-import com.xmpy.demo.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +9,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -70,7 +68,7 @@ public class SecurityConfig {
 
     // filterChain 설정 (filter 설정)
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         // 위에서 Bean으로 만든 설저객체를 security에 적용
         http.cors(Customizer.withDefaults());
@@ -89,7 +87,6 @@ public class SecurityConfig {
         // 세션기반 기능 다 OFF
 
         // JWT 관련 필터 설정 ( 나중에 )
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         // url 요청에 대한 권한 설정
         http.authorizeHttpRequests(auth-> {
@@ -107,3 +104,11 @@ public class SecurityConfig {
         return http.build();
     }
 }
+
+
+// 실행을 했을때 스프링 시큐리티에서 자동생성되는 패스워드가 있는상태
+// 그말은 지금 유저네임 패스워드 방식으로 로그인이 적용이 안되고있다
+// 시큐리티 오프해논 상태인데도 불구하고 비밀번호가 생성이 되고있다
+// localhost8080/login 이 시큐리티적용되면 디폴트로 생성되어야하는데
+// 그것도 접속이 안되고있다
+// 펄밋올은 적용이

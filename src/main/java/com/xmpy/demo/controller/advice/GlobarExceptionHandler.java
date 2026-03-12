@@ -1,6 +1,7 @@
 package com.xmpy.demo.controller.advice;
 
 
+import com.xmpy.demo.exeption.ProductException;
 import com.xmpy.demo.exeption.UserException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,4 +19,14 @@ public class GlobarExceptionHandler {
                 .status(e.getStatus())
                 .body(e.getMessage());
     }
+
+    @ExceptionHandler(ProductException.class)
+    public ResponseEntity<?> handleProductException(ProductException e){
+        return ResponseEntity
+                .status(e.getStatus())
+                .body(e.getMessage());
+    }
+
+
 }
+

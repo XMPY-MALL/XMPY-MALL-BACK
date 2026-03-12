@@ -20,4 +20,9 @@ public class Product {
     private String quickRundown;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+
+    private List<ProductThumbnail> productThumbnails;
+
+
 }

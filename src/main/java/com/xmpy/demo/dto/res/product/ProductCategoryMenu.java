@@ -5,7 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ProductDetailRes {
+public class ProductCategoryMenu {
+    private Long productCategoryId;
+    private String productCategoryName;
     private Long productCategoryDetailId;
-    private String productCategoryDetailName;
+
 }

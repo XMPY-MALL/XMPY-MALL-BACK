@@ -14,13 +14,19 @@
     <resultMap id="userResultMap" type="com.xmpy.demo.entity.User">
         <id property="userId" column="user_id"/>
         <result property="email" column="email"/>
-        <result property="userPassword" column="user_password"/>  <!-- 추가! -->
+        <!-- 아이디랑 패스워드  -->
         <result property="userName" column="user_name"/>
         <result property="userPhone" column="user_phone"/>
         <result property="address" column="address"/>
-        <result property="createAt" column="created_at"/>
-        <result property="roleId" column="role_id"/>  <!-- association 제거하고 이걸로 -->
+        <result property="createAt" column="create_at"/>
+
+        <!--
+         연관관계를 여러개(List)로 들고 올때는, collection,
+         연관관계를 하나 들고 올때는, association
+        -->
+        <association property="roleId" resultMap="roleResultMap" />
     </resultMap>
+
 
     <insert id="addUser">
         insert into
@@ -31,12 +37,6 @@
     <!-- userId는 1이라고 가정 db에 roleid=1 -> user  이런식으로 db에 채워넣어야 한다-->
     <!-- 위에 줄이 칼럼이름 이고, 아래줄이 property에 해당하는 것들   -->
 
-
-    <!--
-    지금부터 아래에 있는 코드들은
-    그 비밀번호, 이메일, 주소, 전화번호 바꾸는 코드 작성하기
-    -->
-    <!-- 1. userName    -->
     <select id="getUserByUsername" resultMap="userResultMap">
         select
             u.user_id,
@@ -44,17 +44,14 @@
             u.user_name,
             u.user_phone,
             u.address,
-            u.created_at,
-            u.user_password,
-            u.role_id
+            u.created_at
         from
             user_tb u
                 inner join role_tb r on u.role_id = r.role_id
         where
-            u.user_name = #{userName}
+            u.username = #{userName}
     </select>
 
-    <!-- 1. userName    -->
     <select id="getUserByEmail" resultMap="userResultMap">
         select
             u.user_id,
@@ -62,9 +59,7 @@
             u.user_name,
             u.user_phone,
             u.address,
-            u.created_at,
-            u.user_password,
-            u.role_id
+            u.created_at
         from
             user_tb u
                 inner join role_tb r on u.role_id = r.role_id
@@ -79,9 +74,7 @@
             u.user_name,
             u.user_phone,
             u.address,
-            u.created_at,
-            u.user_password,
-            u.role_id
+            u.created_at
         from
             user_tb u
                 inner join role_tb r on u.role_id = r.role_id
@@ -89,12 +82,6 @@
             u.user_id = #{userId}
     </select>
 
-    <update id="updateUserInfo">
-        update user_tb
-        set
-            user_password = #{password},
-            address = #{address},
-            user_phone = #{userPhone}
-        where email = #{email}
-    </update>
+
+
 </mapper>

@@ -115,7 +115,7 @@
         SET
         product_name = #{productName},
         description = #{description},
-        is_best = #{isBest},
+        is_best = #{best},
         img_url = #{imgUrl},
         price = #{price},
         quick_rundown = #{quickRundown},

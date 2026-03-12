@@ -5,7 +5,6 @@ import com.xmpy.demo.entity.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +16,6 @@ public class SignupReqDto {
     // 회원가입 창 백엔드 구현..
 
     // validation은 간략하게 구현
-    // jackson이 알아서 순서를 맞춰준다
 
     // 아이디 역할 = email
     @NotBlank(message = "올바른 이메일을 입력해주세요0")
@@ -33,8 +31,7 @@ public class SignupReqDto {
     private String userName;
 
     @NotNull(message = "전화번호를 입력해주세요")
-    @Pattern(regexp = "^\\d{2,3}-\\d{3,4}-\\d{4}$", message = "전화번호 형식이 올바르지 않습니다.")
-    private String userPhone;
+    private Long userPhone;
 
     @NotBlank(message = "주소를 입력해주세요")
     private String address;

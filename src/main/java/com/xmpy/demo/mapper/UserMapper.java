@@ -2,7 +2,6 @@ package com.xmpy.demo.mapper;
 
 import com.xmpy.demo.entity.User;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.Optional;
 
@@ -17,11 +16,4 @@ public interface UserMapper {
 
     Optional<User> getUserById(int userId);
     // 여기까지가 일단 -------------------------- 회원가입 - 이제 토큰발급하러 가기
-
-    void updateUserInfo(
-            @Param("email") String email,
-            @Param("password") String password,
-            @Param("address") String address,
-            @Param("userPhone") String userPhone
-    );
 }
