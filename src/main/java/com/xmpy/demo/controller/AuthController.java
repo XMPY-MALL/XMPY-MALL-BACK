@@ -1,5 +1,6 @@
 package com.xmpy.demo.controller;
 
+import com.xmpy.demo.dto.req.auth.SignInReqDto;
 import com.xmpy.demo.dto.req.auth.SignupReqDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,5 +28,13 @@ public class AuthController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body("계정생성 완료");
+    }
+
+    // 로그인
+    // 논리적으로는 getMapping이 맞지만, -> 하지만, param등 민감정보가 노출
+    // 민감한 정보를 주고 받아야 한다 -> body가 필요함.. -> post
+    @PostMapping("/signin")
+    public ResponseEntity<?> signIn(@RequestBody SignInReqDto reqDto){
+        return ResponseEntity.ok(authService.signIn(reqDto));
     }
 }

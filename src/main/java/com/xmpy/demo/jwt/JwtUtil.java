@@ -18,7 +18,6 @@ import java.util.Map;
 public class JwtUtil { // ( jwt 토큰 발급 + jwt 토큰 검증 )
     private final SecretKey key;
     private final long accessExpireMillis;
-    private final long refreshExpireMillis; // 리프레쉬 토큰 관령 코드
 
     public JwtUtil(
             // @Value로 yaml에 있는 secret, expire-millis, refresh~ 다 들고오기
@@ -30,8 +29,7 @@ public class JwtUtil { // ( jwt 토큰 발급 + jwt 토큰 검증 )
             -- application.yaml에 있는 정보들을 다 들고온다.. -- @Value
             */
             @Value("${jwt.secret}") String secret,
-            @Value("${jwt.access-expire-millis}") long accessExpireMillis,
-            @Value("${jwt.refresh-expire-millis}") long refreshExpireMillis // 리프레쉬 토큰 관령 코드
+            @Value("${jwt.access-expire-millis}") long accessExpireMillis
     ){
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
         // 암호(secret)을 Base64로 인코딩(변환)을 하면, 그 안전한 문자열로 변환이 가능하다..
@@ -41,7 +39,6 @@ public class JwtUtil { // ( jwt 토큰 발급 + jwt 토큰 검증 )
         // 토큰의 유효기간 : jwt자체에 토큰의 만료시간이 존재 ( 만료시간이 박혀있기 때문에, 그 시간이 지나면, 토큰이 자동으로 무효 )
         // 로그인을 해서 (AccessToken을 발급받으면, 해당 시간동안, api요청 가능 ( 메인페이지 접근, 상품목록 보기, 장바구니 보기, 주문, 제품상세보시)
 
-        this.refreshExpireMillis = refreshExpireMillis; //. 리프레쉬 토큰 관령 코드
     }
 
 
@@ -64,8 +61,7 @@ public class JwtUtil { // ( jwt 토큰 발급 + jwt 토큰 검증 )
 
             String subject, // 유저 식별
             long expireMillis, // 만료시간
-            Map<String, Object> extraClaims, // payload에 담을 데이터
-            String type // access, refresh용도
+            Map<String, Object> extraClaims // payload에 담을 데이터
     ){
         long now = System.currentTimeMillis(); // 현재 시간
         long exp = now + expireMillis; // 만료시'각'
@@ -74,8 +70,7 @@ public class JwtUtil { // ( jwt 토큰 발급 + jwt 토큰 검증 )
         JwtBuilder builder = Jwts.builder()
                 .claim("sub", subject) // 유저식별 subject = "doggabyang@gmail.com"
                 .claim("iat", now/1000) // issuedAt 발급시각(현재시간 now)
-                .claim("exp", exp/1000) // expireAt 만료시각( expireMillis )
-                .claim("type", type); // ACCESS
+                .claim("exp", exp/1000); // expireAt 만료시각( expireMillis )
 
         // 만약 builder부분에 (key, value)쌍을 더 추가 하고 싶다면,
         if (extraClaims != null){
@@ -91,11 +86,6 @@ public class JwtUtil { // ( jwt 토큰 발급 + jwt 토큰 검증 )
                 .compact();
     }
 
-
-
-
-
-
     /*
     buildToken(
             String subject, // 유저 식별
@@ -106,18 +96,10 @@ public class JwtUtil { // ( jwt 토큰 발급 + jwt 토큰 검증 )
     */
     // 바로 위에 있는 토큰발급 코드메서드를 활용한다
     // accessToken발급
-    public String generateToken(String subject, Map<String, Object> claims){
-        return buildToken(subject, accessExpireMillis, claims, "ACCESS");
+    public String generateAccessToken(String subject, Map<String, Object> claims){
+        return buildToken(subject, accessExpireMillis, claims);
     }
 
-
-    // 리프레쉬 관련 토큰
-    // refreshToken발급 - 리프레쉬 토큰 관련 코드
-    // refreshToken -> accessToken이 만료되면, 다시 accessToken을 발행하도록
-    // 이전에 인증이 되었다고 증명해주는 토큰
-    public String generateRefreshToken(String subject){
-        return buildToken(subject, refreshExpireMillis, Map.of(), "REFRESH");
-    }
 
     // 토큰 검증
     public Claims getClaims(String token) throws JwtException {
@@ -145,4 +127,3 @@ public class JwtUtil { // ( jwt 토큰 발급 + jwt 토큰 검증 )
     }
 
 }
-
