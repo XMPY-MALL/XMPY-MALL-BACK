@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class SigninReqDto {
+public class SignInReqDto {
     private String email;
     // email == id이고, unique 걸어줌
 

@@ -288,20 +288,22 @@
     </update>
 
     <!-- 베스트 상품만 조회 -->
-    <select id="bestList" resultMap="ProductMap">
+    <select id="bestList" resultMap="ProductWithThumbnails">
         SELECT
         p.product_id,
+        p.category_id,
+        p.category_detail_id,
         p.product_name,
         p.description,
-        p.is_best,
-        p.img_url,
+        p.is_best AS best,
         p.price,
         p.quick_rundown,
-        p.category_id,
         p.created_at,
         p.updated_at,
-        p.category_detail_id
+        t.product_thumnail_id,
+        t.product_url
         FROM product_tb p
+        LEFT JOIN product_thumbnail_tb t ON p.product_id = t.product_id
         WHERE p.is_best = 1
         ORDER BY p.created_at DESC
     </select>

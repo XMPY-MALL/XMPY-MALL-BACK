@@ -145,7 +145,10 @@ public class ProductService  {
             item.setProductId(p.getProductId());
             item.setProductName(p.getProductName());
             item.setPrice(p.getPrice());
-            item.setThumbnailUrl(p.getProductThumbnails().get(0).getProductUrl());
+            List<ProductThumbnail> thumbnails = p.getProductThumbnails();
+            if (thumbnails != null && !thumbnails.isEmpty()) {
+                item.setThumbnailUrl(thumbnails.get(0).getProductUrl());
+            }
             item.setBest(p.isBest());
             item.setSoldOut(false);
             item.setReviewCount(0);
