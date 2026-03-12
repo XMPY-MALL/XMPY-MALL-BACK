@@ -3,7 +3,12 @@ spring:
     active: common # 현재 프로필 설정
     group: # 특정 프로필을 실행할때, 같이 실행되게끔 그룹 짓기
       common: secret # common이 실행되면. secret 프로필 설정
+server:
+  address: 127.0.0.1
 
+logging:
+  level:
+    com.xmpy.demo.mapper: TRACE
 ---
 
 spring:

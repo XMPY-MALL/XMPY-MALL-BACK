@@ -131,4 +131,116 @@
         WHERE product_id = #{productId}
     </delete>
 
+
+    <!-- 상품 검색/필터/정렬 -->
+    <select id="search" resultType="com.xmpy.demo.dto.res.product.ProductListRowRes">
+        SELECT
+        p.product_id AS productId,
+        p.product_name AS productName,
+        p.price AS price,
+        p.img_url AS imgUrl,
+        p.is_best AS best,
+        p.category_id AS categoryId,
+        p.category_detail_id AS categoryDetailId,
+        p.quick_rundown AS quickRundown
+        FROM product_tb p
+        <where>
+            <if test="req.keyword != null and req.keyword != ''">
+                p.product_name LIKE CONCAT('%', #{req.keyword}, '%')
+            </if>
+
+            <if test="req.categoryId != null">
+                AND p.category_id = #{req.categoryId}
+            </if>
+
+            <if test="req.categoryDetailId != null">
+                AND p.category_detail_id = #{req.categoryDetailId}
+            </if>
+
+            <if test="req.best != null">
+                AND p.is_best = #{req.best}
+            </if>
+        </where>
+
+        <choose>
+            <when test="req.sort == 'priceAsc'">
+                ORDER BY p.price ASC
+            </when>
+            <when test="req.sort == 'priceDesc'">
+                ORDER BY p.price DESC
+            </when>
+            <when test="req.sort == 'oldest'">
+                ORDER BY p.created_at ASC
+            </when>
+            <otherwise>
+                ORDER BY p.created_at DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <!--베스트 여부만 변경 -->
+    <update id="updateBest">
+        UPDATE product_tb
+        SET is_best = #{best}
+        WHERE product_id = #{productId}
+    </update>
+
+    <!-- 베스트 상품만 조회 -->
+    <select id="bestList" resultMap="ProductWithThumbnails">
+        SELECT
+        p.product_id,
+        p.category_id,
+        p.category_detail_id,
+        p.product_name,
+        p.description,
+        p.is_best AS best,
+        p.price,
+        p.quick_rundown,
+        p.created_at,
+        p.updated_at,
+        t.product_thumnail_id,
+        t.product_url
+        FROM product_tb p
+        LEFT JOIN product_thumbnail_tb t ON p.product_id = t.product_id
+        WHERE p.is_best = 1
+        ORDER BY p.created_at DESC
+    </select>
+
+    <resultMap id="ProductWithThumbnails" type="com.xmpy.demo.entity.Product">
+        <id property="productId" column="product_id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="categoryDetailId" column="category_detail_id"/>
+        <result property="productName" column="product_name"/>
+        <result property="description" column="description"/>
+        <result property="best" column="best"/>
+        <result property="price" column="price"/>
+        <result property="quickRundown" column="quick_rundown"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+
+        <collection property="productThumbnails" ofType="com.xmpy.demo.entity.ProductThumbnail">
+            <id property="productThumbnailId" column="product_thumnail_id"/>
+            <result property="productId" column="product_id"/>
+            <result property="productUrl" column="product_url"/>
+        </collection>
+    </resultMap>
+
+    <select id="findById" resultMap="ProductWithThumbnails">
+        SELECT
+        p.product_id,
+        p.category_id,
+        p.category_detail_id,
+        p.product_name,
+        p.description,
+        p.best,
+        p.price,
+        p.quick_rundown,
+        p.created_at,
+        p.updated_at,
+        t.product_thumnail_id,
+        t.product_url
+        FROM product_tb p
+        LEFT JOIN product_thumbnail_tb t ON p.product_id = t.product_id
+        WHERE p.product_id = #{productId}
+    </select>
 </mapper>

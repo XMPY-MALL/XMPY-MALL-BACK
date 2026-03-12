@@ -26,7 +26,7 @@ public class ProductController {
     // 전체 상품 조회
     @GetMapping
     public List<Product> getAll() {
-        System.out.println("gogogogo");
+
         return productService.getAll();
     }
 
@@ -90,8 +90,9 @@ public class ProductController {
     }
 
     // 모든유저가 get으로 볼수있음
-    @GetMapping("/product/best")
+    @GetMapping("/best")
     public ResponseEntity<?> bestList() {
+
         return ResponseEntity.ok(productService.bestList());
     }
 
