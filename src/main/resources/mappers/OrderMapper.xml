@@ -1,11 +1,36 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.xmpy.demo.mapper.OrderMapper">
+    <!-- OrderItemResDto 매핑 -->
+    <resultMap id="OrderItemResultMap" type="com.xmpy.demo.dto.res.order.OrderItemResDto">
+        <result property="orderItemId"  column="order_item_id"/>
+        <result property="productName"  column="product_name"/>
+        <result property="imgUrl"       column="img_url"/>
+        <result property="sizeName"     column="size_name"/>
+        <result property="colorName"    column="color_name"/>
+        <result property="price"        column="price"/>
+        <result property="quantity"     column="quantity"/>
+    </resultMap>
 
     <select id="findAdminOrders" resultType="com.xmpy.demo.dto.res.order.OrderRes">
+    <!-- OrderResDto 매핑 (orderItems 컬렉션 포함) -->
+    <resultMap id="OrderResultMap" type="com.xmpy.demo.dto.res.order.OrderResDto">
+        <result property="ordersId"           column="orders_id"/>
+        <result property="status"             column="status"/>
+        <result property="totalPrice"         column="total_price"/>
+        <result property="address"            column="address"/>
+        <result property="createdAt"          column="created_at"/>
+        <result property="estimatedDelivery"  column="estimated_delivery"/>
+        <collection property="orderItems" ofType="com.xmpy.demo.dto.res.order.OrderItemResDto"
+                    resultMap="OrderItemResultMap"/>
+    </resultMap>
+
+    <!-- 사용자 이메일로 주문 목록 조회 -->
+    <select id="findOrdersByEmail" resultMap="OrderResultMap">
         SELECT
             o.orders_id AS orderId,
             u.user_name AS customerName,
@@ -25,6 +50,19 @@
             o.total_price AS totalPrice,
             o.created_at AS orderDate,
             o.status AS status
+            o.orders_id,
+            o.status,
+            o.total_price,
+            o.address,
+            DATE_FORMAT(o.created_at, '%Y-%m-%d')          AS created_at,
+            DATE_FORMAT(o.updated_at, '%Y-%m-%d')          AS estimated_delivery,
+            oi.order_item_id,
+            p.product_name,
+            pt.product_url                                 AS img_url,
+            s.size_name,
+            st.color_id                                    AS color_name,
+            oi.price,
+            oi.quantity
         FROM orders_tb o
                  JOIN user_tb u
                       ON o.user_id = u.user_id
@@ -38,6 +76,20 @@
                            ON oi.size_id = s.size_id
         GROUP BY o.orders_id, u.user_name, o.total_price, o.created_at, o.status
         ORDER BY o.created_at DESC, o.orders_id DESC
+                 JOIN user_tb u        ON o.user_id     = u.user_id
+                 JOIN order_item_tb oi ON o.orders_id   = oi.orders_id
+                 JOIN product_tb p     ON oi.product_id = p.product_id
+                 LEFT JOIN (
+            SELECT product_id, MIN(product_url) AS product_url
+            FROM product_thumbnail_tb
+            GROUP BY product_id
+        ) pt ON p.product_id = pt.product_id
+                 JOIN size_tb s        ON oi.size_id    = s.size_id
+                 JOIN stock_tb st      ON oi.color_id   = st.color_id
+            AND oi.product_id = st.product_id
+            AND oi.size_id    = st.size_id
+        WHERE u.email = #{email}
+        ORDER BY o.created_at DESC
     </select>
 
     <update id="updateOrderStatus">
