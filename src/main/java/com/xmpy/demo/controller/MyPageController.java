@@ -30,14 +30,14 @@ public class MyPageController {
         return authentication.getName();
     }
 
-    // 유저 정보 조회
+    // 0. 유저 정보 조회
     @GetMapping("/me")
     public ResponseEntity<?> getUserInfo(){
         String email = getCurrentUserEmail();
         return ResponseEntity.ok(userService.getUserInfo(email));
     }
 
-    // 유저 정보 수정
+    // 1. 유저 정보 수정
     @PutMapping("/me")
     public ResponseEntity<?> updateUserInfo(@RequestBody UpdateUserReqDto reqDto){
         String email = getCurrentUserEmail();

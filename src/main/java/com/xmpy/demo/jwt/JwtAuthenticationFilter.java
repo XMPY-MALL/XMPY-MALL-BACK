@@ -65,7 +65,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { // 상속받
             JwtAuthentication authentication = new JwtAuthentication(email, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        } catch (JwtException e) {
+        }
+        catch (JwtException e) {
             System.out.println("토큰 검증 실패: " + e.getMessage());
         }
 
