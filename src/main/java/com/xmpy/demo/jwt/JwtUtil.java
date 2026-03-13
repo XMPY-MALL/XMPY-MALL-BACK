@@ -55,7 +55,6 @@ public class JwtUtil { // ( jwt 토큰 발급 + jwt 토큰 검증 )
     */
     // 토큰 발급
     private String buildToken(
-
             // buildToken(subject, accessExpireMillis, claims, "ACCESS"); 이런식으로 써줌...
             // 이렇게 해서 builder이 payload형태로 만들어지고, 그 payload와 key(secret)을 조합해서 토큰을 만들어낸다.
 

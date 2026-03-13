@@ -22,7 +22,7 @@ public class AuthService {
     private final UserMapper userMapper;
     private final BCryptPasswordEncoder encoder;
     private final JwtUtil jwtUtil;
-
+    // authService에서 지금, role, userId를 들고 오는 형태임..
 
     // User객체만 가져오면, 토큰 쌍으로 바꿔서 리턴
     private String generateToken(User user){
@@ -30,7 +30,10 @@ public class AuthService {
         String sub = user.getEmail();
 
         Map<String, Object> extraClaims = Map.of(
-                "role", user.getRoleId()
+                "role", user.getRoleId(),
+                "userId", user.getUserId()
+                // userId를 받아와서 db랑 연결하는 등 그런식으로 해야 할 것 같다...!
+
                 // 강사님은 user.getRole().getRoleName()으로 작성
                 // 강사님의 entity와 나의 entity부분이 다른데, 어떤 방식으로 해줘야 하나..
         );
@@ -42,16 +45,14 @@ public class AuthService {
 
     // 1. 회원 가입
     public void signUp(SignupReqDto dto) {
-
         // 1. 아이디, 이메일 중복검사..
         boolean isDuplicatedEmail = userMapper
                 .getUserByEmail(dto.getEmail())
                 .isPresent(); // Optional안에 값이 있으면, true
 
         if (isDuplicatedEmail) {
-            throw new UserException("이미 존재하는 이메일 입니다.", HttpStatus.CONFLICT);
+            throw new UserException("이미 존재하는 이메일 입니다." , HttpStatus.CONFLICT);
         }
-
         // 이거 넘으면, 1단계 통과
 
         // 2. SignupReqDto(dto) -> entity 로 바꿔준다...
