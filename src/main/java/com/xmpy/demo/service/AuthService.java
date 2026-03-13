@@ -29,7 +29,8 @@ public class AuthService {
         String sub = user.getEmail();
 
         Map<String, Object> extraClaims = Map.of(
-                "role", user.getRoleId()
+                "role", user.getRoleId(),
+                "userId", user.getUserId() // userId를 jwt에 추가 - order, review등에서 사용할것
                 // 강사님은 user.getRole().getRoleName()으로 작성
                 // 강사님의 entity와 나의 entity부분이 다른데, 어떤 방식으로 해줘야 하나..
         );
