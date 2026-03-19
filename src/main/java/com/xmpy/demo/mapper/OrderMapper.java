@@ -16,4 +16,17 @@ public interface OrderMapper {
                           @Param("status") String status);
 
     List<OrderResDto> findOrdersByEmail(@Param("email") String email);
+
+    void insertOrder(@Param("userId") long userId,
+                     @Param("totalPrice") int totalPrice,
+                     @Param("address") String address);
+
+    long getLastInsertId();
+
+    void insertOrderItem(@Param("ordersId") long ordersId,
+                         @Param("productId") long productId,
+                         @Param("sizeId") long sizeId,
+                         @Param("colorId") long colorId,
+                         @Param("price") int price,
+                         @Param("quantity") int quantity);
 }

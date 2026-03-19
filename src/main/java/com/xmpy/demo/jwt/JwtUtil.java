@@ -125,4 +125,10 @@ public class JwtUtil { // ( jwt 토큰 발급 + jwt 토큰 검증 )
         return header.substring("Bearer ".length());
     }
 
+    // 토큰에서 userId 뽑는 메서드
+    public Long getUserId(String token) {
+        Claims claims = getClaims(token);
+        return ((Number) claims.get("userId")).longValue();
+    }
+
 }

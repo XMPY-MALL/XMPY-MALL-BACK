@@ -105,6 +105,7 @@ public class ProductService  {
                 .best(p.isBest())
                 .price(p.getPrice())
                 .quickRundown(p.getQuickRundown())
+                .productDetailContent(p.getProductDetail().getProductDetailContent())
                 .imgUrls(imgUrls)
                 .build();
     }

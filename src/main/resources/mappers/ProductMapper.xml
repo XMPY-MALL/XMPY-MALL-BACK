@@ -28,6 +28,12 @@
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
 
+        <association property="productDetail" javaType="com.xmpy.demo.entity.ProductDetail">
+            <id property="productDetailId" column="product_detail_id"/>
+            <result property="productId" column="product_id"/>
+            <result property="productDetailContent" column="product_detail_content"/>
+        </association>
+
         <collection property="productThumbnails" ofType="com.xmpy.demo.entity.ProductThumbnail">
             <id property="productThumbnailId" column="product_thumnail_id"/>
             <result property="productId" column="product_id"/>
@@ -67,12 +73,26 @@
     </select>
 
     <!-- 상품 단건 조회 -->
-    <select id="findById" parameterType="long" resultMap="ProductMap">
+    <select id="findById" parameterType="long" resultMap="ProductWithThumbnails">
         SELECT
-        product_id, product_name, description, is_best, img_url,
-        price, quick_rundown, category_id, created_at, updated_at, category_detail_id
-        FROM product_tb
-        WHERE product_id = #{productId}
+        p.product_id,
+        p.product_name,
+        p.description,
+        p.is_best           AS best,
+        p.price,
+        p.quick_rundown,
+        p.category_id,
+        p.created_at,
+        p.updated_at,
+        p.category_detail_id,
+        pd.product_detail_id,
+        pd.product_detail_content,
+        pt.product_thumnail_id,
+        pt.product_url
+        FROM product_tb p
+        LEFT JOIN product_detail_tb pd ON p.product_id = pd.product_id
+        LEFT JOIN product_thumbnail_tb pt ON p.product_id = pt.product_id
+        WHERE p.product_id = #{productId}
     </select>
 
     <!-- 대분류(category_id) 상품 조회 -->

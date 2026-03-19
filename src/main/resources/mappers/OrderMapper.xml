@@ -99,4 +99,18 @@
         WHERE orders_id = #{ordersId}
     </update>
 
+    <insert id="insertOrderItem">
+        INSERT INTO order_item_tb (orders_id, product_id, size_id, color_id, price, quantity)
+        VALUES (#{ordersId}, #{productId}, #{sizeId}, #{colorId}, #{price}, #{quantity})
+    </insert>
+
+    <insert id="insertOrder">
+        INSERT INTO orders_tb (user_id, status, total_price, address, created_at, updated_at)
+        VALUES (#{userId}, '결제완료', #{totalPrice}, #{address}, NOW(), NOW())
+    </insert>
+
+    <select id="getLastInsertId" resultType="long">
+        SELECT LAST_INSERT_ID()
+    </select>
+
 </mapper>

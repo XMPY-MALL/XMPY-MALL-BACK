@@ -23,6 +23,7 @@ public class Product {
 
 
     private List<ProductThumbnail> productThumbnails;
+    private ProductDetail productDetail;
 
 
 }
