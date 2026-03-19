@@ -14,5 +14,6 @@ public interface OrderMapper {
 
     int updateOrderStatus(@Param("ordersId") long ordersId,
                           @Param("status") String status);
+
     List<OrderResDto> findOrdersByEmail(@Param("email") String email);
 }

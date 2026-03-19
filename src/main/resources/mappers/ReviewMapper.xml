@@ -42,6 +42,13 @@
     </select>
 
     <select id="countByProductId" resultType="long">
+        SELECT
+            COUNT(*)
+        FROM
+            review_tb
+        WHERE
+            product_id = #{productId}
+    </select>
     <select id="findReviewableItemsByEmail" resultType="com.xmpy.demo.dto.res.review.ReviewableItemResDto">
         SELECT
             oi.order_item_id    AS orderItemId,

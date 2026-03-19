@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="dataSourceStorageLocal" created-in="IU-253.29346.138">
+  <component name="dataSourceStorageLocal" created-in="IU-233.15619.7">
     <data-source name="xmpy-mall@127.0.0.1" uuid="aa553083-0bb1-46d8-a906-8ee0137f17dc">
       <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MYSQL" />
       <user-name>root</user-name>

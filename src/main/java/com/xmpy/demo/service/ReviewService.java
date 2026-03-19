@@ -44,8 +44,6 @@ public class ReviewService {
         return name.charAt(0) + "*".repeat(name.length() - 1);
     }
 
-    private final ReviewMapper reviewMapper;
-
     public List<ReviewableItemResDto> getReviewableItems(String email) {
         return reviewMapper.findReviewableItemsByEmail(email);
     }
