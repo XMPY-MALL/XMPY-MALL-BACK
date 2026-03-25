@@ -5,16 +5,16 @@
 <mapper namespace="com.xmpy.demo.mapper.ReviewMapper">
 
     <resultMap id="UserResult" type="com.xmpy.demo.entity.User">
-        <id     property="userId"   column="user_id"/>
+        <id property="userId" column="user_id"/>
         <result property="userName" column="user_name"/>
     </resultMap>
 
     <resultMap id="ReviewWithUser" type="com.xmpy.demo.entity.Review">
-        <id     property="reviewId"    column="review_id"/>
-        <result property="productId"   column="product_id"/>
+        <id property="reviewId" column="review_id"/>
+        <result property="productId" column="product_id"/>
         <result property="orderItemId" column="order_item_id"/>
-        <result property="content"     column="content"/>
-        <result property="createdAt"   column="created_at"/>
+        <result property="content" column="content"/>
+        <result property="createdAt" column="created_at"/>
         <association property="user" resultMap="UserResult"/>
     </resultMap>
 
@@ -27,85 +27,99 @@
             r.created_at,
             u.user_id,
             u.user_name
-        FROM
-            review_tb r
-        JOIN
-            user_tb u ON r.user_id = u.user_id
-        WHERE
-            r.product_id = #{productId}
-        ORDER BY
-            r.created_at DESC
-        LIMIT
-            #{limit}
-        OFFSET
-            #{offset}
+        FROM review_tb r
+                 JOIN user_tb u ON r.user_id = u.user_id
+        WHERE r.product_id = #{productId}
+        ORDER BY r.created_at DESC
+            LIMIT #{limit}
+        OFFSET #{offset}
     </select>
 
     <select id="countByProductId" resultType="long">
         SELECT
             COUNT(*)
-        FROM
-            review_tb
-        WHERE
-            product_id = #{productId}
+        FROM review_tb
+        WHERE product_id = #{productId}
     </select>
+
     <select id="findReviewableItemsByEmail" resultType="com.xmpy.demo.dto.res.review.ReviewableItemResDto">
         SELECT
-            oi.order_item_id    AS orderItemId,
-            o.orders_id         AS ordersId,
-            p.product_id        AS productId,
-            p.product_name      AS productName,
-            pt.product_url      AS imgUrl,
-            s.size_name         AS sizeName,
-            c.color_name        AS colorName,
-            oi.quantity         AS quantity
+            oi.order_item_id AS orderItemId,
+            o.orders_id AS ordersId,
+            p.product_id AS productId,
+            p.product_name AS productName,
+            pt.product_url AS imgUrl,
+            s.size_name AS sizeName,
+            c.color_name AS colorName,
+            oi.quantity AS quantity
         FROM order_item_tb oi
-                 JOIN orders_tb o      ON oi.orders_id  = o.orders_id
-                 JOIN product_tb p     ON oi.product_id = p.product_id
+                 JOIN orders_tb o ON oi.orders_id = o.orders_id
+                 JOIN product_tb p ON oi.product_id = p.product_id
                  LEFT JOIN (
             SELECT product_id, MIN(product_url) AS product_url
             FROM product_thumbnail_tb
             GROUP BY product_id
         ) pt ON p.product_id = pt.product_id
-                 JOIN size_tb s        ON oi.size_id    = s.size_id
-                 JOIN stock_tb st      ON oi.color_id   = st.color_id
-            AND oi.product_id = st.product_id
-            AND oi.size_id    = st.size_id
-                 JOIN color_tb c       ON st.color_id   = c.color_id
-                 JOIN user_tb u        ON o.user_id     = u.user_id
+                 JOIN size_tb s ON oi.size_id = s.size_id
+                 JOIN stock_tb st
+                      ON oi.color_id = st.color_id
+                          AND oi.product_id = st.product_id
+                          AND oi.size_id = st.size_id
+                 JOIN color_tb c ON st.color_id = c.color_id
+                 JOIN user_tb u ON o.user_id = u.user_id
         WHERE u.email = #{email}
           AND o.status = '배송완료'
           AND oi.order_item_id NOT IN (
-            SELECT order_item_id FROM review_tb WHERE user_id = (
-                SELECT user_id FROM user_tb WHERE email = #{email}
+            SELECT order_item_id
+            FROM review_tb
+            WHERE user_id = (
+                SELECT user_id
+                FROM user_tb
+                WHERE email = #{email}
             )
         )
         ORDER BY o.created_at DESC
-            COUNT(*)
-        FROM
-            review_tb
-        WHERE
-            product_id = #{productId}
     </select>
 
     <insert id="insertReview">
         INSERT INTO review_tb (product_id, order_item_id, user_id, content, created_at)
-        SELECT oi.product_id, #{orderItemId}, u.user_id, #{content}, NOW()
+        SELECT
+            oi.product_id,
+            #{orderItemId},
+            u.user_id,
+            #{content},
+            NOW()
         FROM order_item_tb oi
                  JOIN orders_tb o ON oi.orders_id = o.orders_id
-                 JOIN user_tb u   ON o.user_id    = u.user_id
+                 JOIN user_tb u ON o.user_id = u.user_id
         WHERE oi.order_item_id = #{orderItemId}
           AND u.email = #{email}
     </insert>
 
     <select id="findMyReviewsByEmail" resultType="com.xmpy.demo.dto.res.review.MyReviewResDto">
+        SELECT
+            r.review_id AS reviewId,
+            p.product_name AS productName,
+            pt.product_url AS imgUrl,
+            r.content AS content,
+            r.created_at AS createdAt,
+            r.admin_reply AS adminReply,
+            r.admin_reply_created_at AS adminReplyCreatedAt,
+            r.admin_reply_updated_at AS adminReplyUpdatedAt
+        FROM review_tb r
+                 JOIN product_tb p ON r.product_id = p.product_id
+                 LEFT JOIN (
+            SELECT product_id, MIN(product_url) AS product_url
+            FROM product_thumbnail_tb
+            GROUP BY product_id
+        ) pt ON p.product_id = pt.product_id
+                 JOIN user_tb u ON r.user_id = u.user_id
+        WHERE u.email = #{email}
+        ORDER BY r.created_at DESC, r.review_id DESC
+    </select>
+
     <select id="findAdminReviews" resultType="com.xmpy.demo.dto.res.review.AdminReviewRes">
         SELECT
-            r.review_id         AS reviewId,
-            p.product_name      AS productName,
-            pt.product_url      AS imgUrl,
-            r.content,
-            r.created_at        AS createdAt
             r.review_id AS reviewId,
             u.user_name AS userName,
             COALESCE(p.product_name, '상품정보없음') AS productName,
@@ -116,21 +130,9 @@
             r.admin_reply_created_at AS adminReplyCreatedAt,
             r.admin_reply_updated_at AS adminReplyUpdatedAt
         FROM review_tb r
-                 JOIN product_tb p    ON r.product_id = p.product_id
-                 LEFT JOIN (
-            SELECT product_id, MIN(product_url) AS product_url
-            FROM product_thumbnail_tb
-            GROUP BY product_id
-        ) pt ON p.product_id = pt.product_id
-                 JOIN user_tb u        ON r.user_id    = u.user_id
-        WHERE u.email = #{email}
-        ORDER BY r.created_at DESC
-                 JOIN user_tb u
-                      ON r.user_id = u.user_id
-                 LEFT JOIN order_item_tb oi
-                           ON r.order_item_id = oi.order_item_id
-                 LEFT JOIN product_tb p
-                           ON oi.product_id = p.product_id
+                 JOIN user_tb u ON r.user_id = u.user_id
+                 LEFT JOIN order_item_tb oi ON r.order_item_id = oi.order_item_id
+                 LEFT JOIN product_tb p ON oi.product_id = p.product_id
         ORDER BY r.created_at DESC, r.review_id DESC
     </select>
 
